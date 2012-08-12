@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="top|bottom|center"
+    android:background="@drawable/lined"
+    android:gravity="top|bottom"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/card_term"
+        android:layout_width="fill_parent"
+        android:layout_height="139dp"
+        android:layout_above="@+id/card_definition"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="5px"
+        android:text="Card Term"
+        android:textSize="45sp" />
+
+    <TextView
+        android:id="@+id/card_definition"
+        android:layout_width="fill_parent"
+        android:layout_height="139sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:padding="5px"
+        android:text="Card Definition"
+        android:textSize="35sp" />
+
+</RelativeLayout>
