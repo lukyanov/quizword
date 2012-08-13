@@ -8,6 +8,7 @@ import de.marcreichelt.android.RealViewSwitcher;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,7 @@ public class MainMenuActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         
-        if (null == savedInstanceState) {
+        //if (null == savedInstanceState) {
         	setContentView(R.layout.main_menu);
         	String[] values = new String[] {
         			"View My Sets",
@@ -54,7 +55,8 @@ public class MainMenuActivity extends ListActivity
         	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
         			android.R.layout.simple_list_item_1, android.R.id.text1, values);
 			setListAdapter(adapter);
-        } else {
+        //} else {
+        	/*
 		    requestWindowFeature(Window.FEATURE_NO_TITLE);
 		    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		            WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -64,13 +66,16 @@ public class MainMenuActivity extends ListActivity
     		//MainActivity.realViewSwitcher.setCurrentScreen(current_card);
 			// TODO: take control to another activity
 		    setContentView(MainMenuActivity.realViewSwitcher);
-        }
+		    */
+        //}
     }
 
     protected void onListItemClick(ListView l, View v, int position, long id) {
 		if (position == 0) {
 			//renderCards();
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			Intent myIntent = new Intent(l.getContext(), CardActivity.class);
+            startActivityForResult(myIntent, 0);
 		} else {
 			String item = (String) this.getListAdapter().getItem(position);
 			Toast.makeText(getApplicationContext(), item + " selected", Toast.LENGTH_LONG).show();
