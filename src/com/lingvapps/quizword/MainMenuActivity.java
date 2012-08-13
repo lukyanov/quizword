@@ -26,9 +26,15 @@ import android.widget.Toast;
  * Useful URLs:
  * - http://www.vogella.com/articles/AndroidListView/article.html#listview
  * - http://megadarja.blogspot.com/2010/07/android.html
+ *
+ * TODO:
+ * - final
+ * - Activity vs ListActivity
+ * - Callbacks
+ * - new Object() { ... }
  */
 
-public class MainMenuActivity extends Activity
+public class MainMenuActivity extends ListActivity
 {
 	private static RealViewSwitcher realViewSwitcher = null;
 
@@ -45,22 +51,9 @@ public class MainMenuActivity extends Activity
         			"Find Public Sets",
         			"Account Settings"
         	};
-        	// Use your own layout
         	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
         			android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        	final ListView list = (ListView) this.findViewById(R.id.main_menu_list);
-        	list.setAdapter(adapter);
-        	list.setOnItemClickListener(new OnItemClickListener() {
-        		  public void onItemClick(AdapterView<?> parent, View view,
-        				  int position, long id) {
-        			  if (position == 0) {
-        				  renderCards();
-        			  } else {
-        				  String item = (String) list.getAdapter().getItem(position);
-        				  Toast.makeText(getApplicationContext(), item + " selected", Toast.LENGTH_LONG).show();
-        			  }
-        		  }
-        	});
+			setListAdapter(adapter);
         } else {
 		    requestWindowFeature(Window.FEATURE_NO_TITLE);
 		    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -69,13 +62,19 @@ public class MainMenuActivity extends Activity
 //		    	renderCards();
 		    }
     		//MainActivity.realViewSwitcher.setCurrentScreen(current_card);
+			// TODO: take control to another activity
 		    setContentView(MainMenuActivity.realViewSwitcher);
         }
     }
 
-    protected void onListItemClick1(ListView l, View v, int position, long id) {
-//        String item = (String) getListAdapter().getItem(position);
-//        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+		if (position == 0) {
+			//renderCards();
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		} else {
+			String item = (String) this.getListAdapter().getItem(position);
+			Toast.makeText(getApplicationContext(), item + " selected", Toast.LENGTH_LONG).show();
+		}
     }
     
 	private void renderCards() {
