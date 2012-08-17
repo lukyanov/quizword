@@ -45,8 +45,9 @@ public class CardActivity extends Activity {
     private void renderCards() {
         // TODO: Add cache and use it when changing screen orientation
         try {
-            QuizletReaderTask task = new QuizletReaderTask();
-            task.setObserver(new QuizletReaderTask.Callback() {
+            /*
+            QuizletRequestTask task = new QuizletRequestTask();
+            task.setObserver(new QuizletRequestTask.Callback() {
 
                 public void onFailure() {
 
@@ -63,6 +64,7 @@ public class CardActivity extends Activity {
                 }
             });
             task.execute("https://api.quizlet.com/2.0/sets/12868186?client_id=Sb54cREqMM&whitespace=1");
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
