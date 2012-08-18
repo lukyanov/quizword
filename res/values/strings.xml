@@ -6,6 +6,8 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_card">Card</string>
     <string name="title_activity_account_settings">Account Settings</string>
-    <string name="auth_error">Authorization error</string>
+    <string name="auth_error_title">Authorization Error</string>
+    <string name="auth_error_message">Error occured when authorizing. Try again</string>
+    <string name="ok">OK</string>
     
 </resources>

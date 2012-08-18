@@ -15,9 +15,19 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
 
     private Activity activity = null;
     private ProgressDialog progressDialog = null;
+    private OnPostExecuteListener onPostExecuteListener = null;
+
+    public interface OnPostExecuteListener {
+        public void onSuccess();
+        public void onFailure();
+    }
 
     public RetrieveAccessTokenTask(Activity activity) {
         this.activity = activity;
+    }
+
+    public void setOnPostExecuteListener(OnPostExecuteListener listener) {
+        this.onPostExecuteListener = listener;
     }
 
     protected void onPreExecute() {
@@ -34,30 +44,29 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
     }
 
     protected void onPostExecute(JSONObject token) {
+        if (token != null) {
+            try {
+                Preferences prefs = Preferences.getInstance();
+
+                Map<String, Object> data = new HashMap<String, Object>();
+
+                data.put("access_token", token.getString("access_token"));
+                data.put("expires_in", Integer.valueOf(token.getInt("expires_in")));
+                data.put("scope", token.getString("scope"));
+                data.put("user_id", token.getString("user_id"));
+
+                prefs.saveUserData(activity, data);
+                Log.d("quizlet", "preferences saved");
+
+                onPostExecuteListener.onSuccess();
+            } catch (Exception e) {
+                onPostExecuteListener.onFailure();
+                e.printStackTrace();
+            }
+        } else {
+            onPostExecuteListener.onFailure();
+        }
+
         progressDialog.dismiss();
-        if (token == null) {
-            //TODO: show error
-            return;
-        }
-        try {
-            Preferences prefs = Preferences.getInstance();
-
-            Map<String, Object> data = new HashMap<String, Object>();
-
-            data.put("access_token", token.getString("access_token"));
-            data.put("expires_in", Integer.valueOf(token.getInt("expires_in")));
-            data.put("scope", token.getString("scope"));
-            data.put("user_id", token.getString("user_id"));
-
-            prefs.saveUserData(activity, data);
-            Log.d("quizlet", "preferences saved");
-
-            Intent intent = activity.getIntent();
-            activity.finish();
-            activity.startActivity(intent);
-            activity.overridePendingTransition(0,0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

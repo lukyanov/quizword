@@ -4,21 +4,27 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AccountSettingsActivity extends ListActivity {
+public class AccountSettingsActivity extends FragmentActivity {
+    
+    static ListView menuListView;
     
     static final int DIALOG_ERROR_ID = 0;
     
     private static String quizletAuthState = new BigInteger(32, new SecureRandom()).toString();
     private String redirectURI;
+    
+    private Boolean flagAuthErrorOccured = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +56,13 @@ public class AccountSettingsActivity extends ListActivity {
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, values);
         }
-        setListAdapter(adapter);
+        menuListView = (ListView) findViewById(R.id.account_settings_menu);
+        menuListView.setAdapter(adapter);
+        menuListView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                onListItemClick((ListView) l, v, position, id);
+            }
+        });
     }
     
     @Override
@@ -64,25 +76,52 @@ public class AccountSettingsActivity extends ListActivity {
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+        flagAuthErrorOccured = false;
+
         Uri data = intent.getData();
         if (data == null) {
             return;
         }
         Log.d("quizlet", "data: " + data.toString());
+
         if (data.getPath().equals("/after_auth")) {
             Log.d("quizlet", "my state: " + quizletAuthState +
                     ", request state: " + data.getQueryParameter("state"));
             if (data.getQueryParameter("state").equals(quizletAuthState) &&
                     data.getQueryParameter("error") == null) {
                 String code = intent.getData().getQueryParameter("code");
-                new RetrieveAccessTokenTask(this).execute(code, redirectURI);
+                RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(this);
+                task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener() {
+                    public void onSuccess() {
+                        restart();
+                    }
+                    public void onFailure() {
+                        showErrorMessage();
+                    }
+                });
+                task.execute(code, redirectURI);
             } else {
-                showErrorMessage();
+                flagAuthErrorOccured = true;
             }
         }
     }
     
+    public void restart() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+        overridePendingTransition(0,0);
+    }
+    
     @Override
+    public void onResume() {
+        super.onResume();
+        if (flagAuthErrorOccured) {
+            showErrorMessage();
+        }
+    }
+    
     protected void onListItemClick(ListView l, View v, int position, long id) {
         switch (position) {
         case 0:
@@ -106,14 +145,14 @@ public class AccountSettingsActivity extends ListActivity {
             }
             break;
         default:
-            String item = (String) this.getListAdapter().getItem(position);
+            String item = (String) menuListView.getAdapter().getItem(position);
             Toast.makeText(getApplicationContext(), item + " selected",
                     Toast.LENGTH_LONG).show();
         }
     }
     
     protected void showErrorMessage() {
-        //DialogFragment newFragment = AlertDialogFragment.newInstance(R.string.auth_error);
-        //newFragment.show(getSupportFragmentManager(), "dialog");
+        DialogFragment newFragment = AlertDialogFragment.newInstance(R.string.auth_error_title, R.string.auth_error_message);
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 }
