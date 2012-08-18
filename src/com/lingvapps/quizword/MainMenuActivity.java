@@ -45,11 +45,11 @@ public class MainMenuActivity extends ListActivity {
         Intent intent;
         switch (position) {
         case 0: 
-            intent = new Intent(l.getContext(), CardActivity.class);
+            intent = new Intent(this, CardActivity.class);
             startActivity(intent);
             break;
         case 2:
-            intent = new Intent(l.getContext(), AccountSettingsActivity.class);
+            intent = new Intent(this, AccountSettingsActivity.class);
             startActivity(intent);
             break;
         default:

@@ -4,11 +4,9 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -56,46 +54,32 @@ public class AccountSettingsActivity extends ListActivity {
     }
     
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+    
+    @Override
     public void onNewIntent(Intent intent) {
-        Log.d("auth", "intent");
         super.onNewIntent(intent);
         Uri data = intent.getData();
         if (data == null) {
             return;
         }
-        Log.d("auth", "data: " + data.toString());
+        Log.d("quizlet", "data: " + data.toString());
         if (data.getPath().equals("/after_auth")) {
-            Log.d("auth", "my state: " + quizletAuthState +
+            Log.d("quizlet", "my state: " + quizletAuthState +
                     ", request state: " + data.getQueryParameter("state"));
-            if (data.getQueryParameter("state").equals(quizletAuthState)) {
+            if (data.getQueryParameter("state").equals(quizletAuthState) &&
+                    data.getQueryParameter("error") == null) {
                 String code = intent.getData().getQueryParameter("code");
                 new RetrieveAccessTokenTask(this).execute(code, redirectURI);
+            } else {
+                showErrorMessage();
             }
         }
-    }
-    
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        switch(id) {
-        case DIALOG_ERROR_ID:
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getString(R.string.auth_error))
-                   .setCancelable(false)
-                   .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int id) {
-                       }
-                   })
-                   .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                       }
-                   });
-            dialog = builder.create();
-            break;
-        default:
-            dialog = null;
-        }
-        return dialog;
     }
     
     @Override
@@ -107,17 +91,18 @@ public class AccountSettingsActivity extends ListActivity {
             if (token == null) {            
                 Intent intent;
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 String authURL = QuizletHTTP.getAuthorizitionURL("read",
                         quizletAuthState, redirectURI);
                 Log.d("quizlet", "Quizlet Auth URL: " + authURL);
                 intent.setData(Uri.parse(authURL));
-                startActivity(intent);   
+                startActivity(intent);
             } else {
                 prefs.clearUserData(this);
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
+                overridePendingTransition(0,0);
             }
             break;
         default:
@@ -128,8 +113,7 @@ public class AccountSettingsActivity extends ListActivity {
     }
     
     protected void showErrorMessage() {
-        showDialog(DIALOG_ERROR_ID);
         //DialogFragment newFragment = AlertDialogFragment.newInstance(R.string.auth_error);
-        //newFragment.show(getFragmentManager(), "dialog");
+        //newFragment.show(getSupportFragmentManager(), "dialog");
     }
 }
