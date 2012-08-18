@@ -1,22 +1,21 @@
 package com.lingvapps.quizword;
 
-import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 class RetrieveAccessTokenTask extends AsyncTask<String, Void, Void> {
     
-    private Context context = null;
+    private Activity activity = null;
     
-    public RetrieveAccessTokenTask(Context context) {
-        this.context = context;
+    public RetrieveAccessTokenTask(Activity activity) {
+        this.activity = activity;
     }
 
     protected Void doInBackground(String... params) {
@@ -25,23 +24,22 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, Void> {
         try {
             // Get the token
             JSONObject token = QuizletHTTP.requestAuthToken(verifier, redirectURI);
+            
+            Preferences prefs = Preferences.getInstance();
+            
+            Map<String, Object> data = new HashMap<String, Object>();
+ 
+            data.put("access_token", token.getString("access_token"));
+            data.put("expires_in", Integer.valueOf(token.getInt("expires_in")));
+            data.put("scope", token.getString("scope"));
+            data.put("user_id", token.getString("user_id"));
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-            SharedPreferences.Editor editor = prefs.edit();
-
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.SECOND, token.getInt("expires_in"));
-            Log.d("quizlet", "token expire time: " + cal.getTime().toString());
-
-            editor
-                .putString("quizlet_access_token", token.getString("access_token"))
-                .putString("quizlet_token_expire_time", cal.getTime().toString())
-                .putString("quizlet_scope", token.getString("scope"))
-                .putString("quizlet_user_id", token.getString("user_id"));
-
-            editor.commit();
+            prefs.saveUserData(activity, data);
             Log.d("quizlet", "preferences saved");
+            
+            Intent intent = activity.getIntent();
+            activity.finish();
+            activity.startActivity(intent);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,26 +2,14 @@ package com.lingvapps.quizword;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Calendar;
-import java.util.Date;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -33,7 +21,6 @@ public class AccountSettingsActivity extends ListActivity {
     
     private static String quizletAuthState = new BigInteger(32, new SecureRandom()).toString();
     private String redirectURI;
-    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,16 +31,17 @@ public class AccountSettingsActivity extends ListActivity {
         
         setContentView(R.layout.account_settings);
         
+        Preferences.init(this);
+        
         String[] values;
         ArrayAdapter<String> adapter;
         
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String token = prefs.getString("quizlet_access_token", null);
+        Preferences prefs = Preferences.getInstance();
+        String token = prefs.getUserData(this, "access_token");
         
-        // TODO: check expire time as well
         if (token != null) {
             values = new String[] {
-                    "Logout (" + prefs.getString("quizlet_user_id", "") + ")"
+                    "Logout (" + prefs.getUserData(this, "user_id", "") + ")"
             };
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -114,13 +102,23 @@ public class AccountSettingsActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         switch (position) {
         case 0:
-            Intent httpIntent = new Intent(Intent.ACTION_VIEW);
-            httpIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            String authURL = QuizletHTTP.getAuthorizitionURL("read",
-                    quizletAuthState, redirectURI);
-            Log.d("quizlet", "Quizlet Auth URL: " + authURL);
-            httpIntent.setData(Uri.parse(authURL));
-            startActivity(httpIntent);   
+            Preferences prefs = Preferences.getInstance();
+            String token = prefs.getUserData(this, "access_token");
+            if (token == null) {            
+                Intent intent;
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                String authURL = QuizletHTTP.getAuthorizitionURL("read",
+                        quizletAuthState, redirectURI);
+                Log.d("quizlet", "Quizlet Auth URL: " + authURL);
+                intent.setData(Uri.parse(authURL));
+                startActivity(intent);   
+            } else {
+                prefs.clearUserData(this);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
             break;
         default:
             String item = (String) this.getListAdapter().getItem(position);

@@ -10,6 +10,5 @@ debug:
 	ant debug
 
 run: debug
-	ant debug uninstall
 	ant debug install
 	adb shell am start com.lingvapps.quizword/.MainMenuActivity
