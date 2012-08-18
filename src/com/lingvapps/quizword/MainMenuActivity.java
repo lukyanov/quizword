@@ -28,6 +28,8 @@ public class MainMenuActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Preferences.init(this);
 
         setContentView(R.layout.main_menu);
         String[] values = new String[] {
@@ -44,8 +46,13 @@ public class MainMenuActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent;
         switch (position) {
-        case 0: 
-            intent = new Intent(this, CardActivity.class);
+        case 0:
+            Preferences prefs = Preferences.getInstance();
+            if (prefs.getUserData(this, "user_id") != null) {
+                intent = new Intent(this, MySetsActivity.class);
+            } else {
+                intent = new Intent(this, AccountSettingsActivity.class);
+            }
             startActivity(intent);
             break;
         case 2:
