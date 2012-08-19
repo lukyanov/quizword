@@ -15,8 +15,8 @@ public class MySetsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         
         RetrieveMySetsTask task = new RetrieveMySetsTask(this);
-        task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<String>>() {
-            public void onSuccess(ArrayAdapter<String> adapter) {
+        task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<CardSet>>() {
+            public void onSuccess(ArrayAdapter<CardSet> adapter) {
                 setContentView(R.layout.my_sets);
                 setListAdapter(adapter);
             }
@@ -30,6 +30,9 @@ public class MySetsActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent;
         intent = new Intent(this, CardActivity.class);
+        CardSet set = (CardSet) getListAdapter().getItem(position);
+        intent.putExtra("set_id", set.getId());
+        intent.putExtra("set_name", set.getName());
         startActivity(intent);
     }
 

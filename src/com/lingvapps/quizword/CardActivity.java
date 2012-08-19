@@ -1,14 +1,12 @@
 package com.lingvapps.quizword;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import de.marcreichelt.android.RealViewSwitcher;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,12 +16,13 @@ public class CardActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        // WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        // MainActivity.realViewSwitcher.setCurrentScreen(current_card); //
-        renderCards();
+
+        Bundle extras = getIntent().getExtras();
+        renderCards(extras.getInt("set_id"), extras.getString("set_name"));
     }
 
     @Override
@@ -32,22 +31,16 @@ public class CardActivity extends Activity {
         return true;
     }
 
-    private void renderCards() {
+    private void renderCards(Integer setId, String setName) {
         // TODO: Add cache and use it when changing screen orientation
         RetrieveSetTask task = new RetrieveSetTask(this);
-        task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener<JSONObject>() {
+        task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener<CardSet>() {
 
-            public void onSuccess(JSONObject result) {
-                try {
-                    realViewSwitcher = new RealViewSwitcher(
-                            getApplicationContext());
-                    setContentView(realViewSwitcher);
-                    fillViewSwitcher(result);
-                    // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+            public void onSuccess(CardSet set) {
+                realViewSwitcher = new RealViewSwitcher(getApplicationContext());
+                setContentView(realViewSwitcher);
+                fillViewSwitcher(set);
+                // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
 
             public void onFailure() {
@@ -55,23 +48,19 @@ public class CardActivity extends Activity {
             }
 
         });
-        task.execute(Integer.valueOf(12868186).toString());
+        task.execute(setId.toString());
     }
 
-    private void fillViewSwitcher(JSONObject JSON) throws JSONException {
+    private void fillViewSwitcher(CardSet set) {
 
-        JSONArray terms = (JSONArray) JSON.get("terms");
-
-        JSONObject t;
-        for (int i = 0; i < terms.length(); i++) {
-            t = terms.getJSONObject(i);
+        for (Card card : set) {
             RelativeLayout layout = (RelativeLayout) getLayoutInflater()
                     .inflate(R.layout.card, null);
             TextView textView1 = (TextView) layout.findViewById(R.id.card_term);
             TextView textView2 = (TextView) layout
                     .findViewById(R.id.card_definition);
-            textView1.setText(t.getString("term"));
-            textView2.setText(t.getString("definition"));
+            textView1.setText(card.getTerm());
+            textView2.setText(card.getDefinition());
             // textView.setTextSize(30);
             // textView.setTextColor(Color.BLACK);
             // textView.setGravity(Gravity.CENTER);
