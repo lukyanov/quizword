@@ -2,6 +2,9 @@ package com.lingvapps.quizword;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+
+import org.json.JSONObject;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
@@ -90,8 +93,9 @@ public class AccountSettingsActivity extends FragmentActivity {
                     data.getQueryParameter("error") == null) {
                 String code = intent.getData().getQueryParameter("code");
                 RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(this);
-                task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener() {
-                    public void onSuccess() {
+                task.setMessage("Authorizing...");
+                task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener<JSONObject>() {
+                    public void onSuccess(JSONObject result) {
                         restart();
                     }
                     public void onFailure() {

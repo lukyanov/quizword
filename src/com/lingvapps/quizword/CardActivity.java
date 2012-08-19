@@ -7,11 +7,8 @@ import org.json.JSONObject;
 import de.marcreichelt.android.RealViewSwitcher;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.util.Log;
 import android.view.Menu;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,7 +35,7 @@ public class CardActivity extends Activity {
     private void renderCards() {
         // TODO: Add cache and use it when changing screen orientation
         RetrieveSetTask task = new RetrieveSetTask(this);
-        task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener() {
+        task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener<JSONObject>() {
 
             public void onSuccess(JSONObject result) {
                 try {

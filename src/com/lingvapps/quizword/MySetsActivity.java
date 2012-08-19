@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MySetsActivity extends ListActivity {
 
@@ -16,7 +15,7 @@ public class MySetsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         
         RetrieveMySetsTask task = new RetrieveMySetsTask(this);
-        task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener() {
+        task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<String>>() {
             public void onSuccess(ArrayAdapter<String> adapter) {
                 setContentView(R.layout.my_sets);
                 setListAdapter(adapter);

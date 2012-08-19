@@ -5,36 +5,13 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.Context;
 import android.util.Log;
 
-class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
+class RetrieveAccessTokenTask extends HTTPTask<String, JSONObject> {
 
-    private Activity activity = null;
-    private ProgressDialog progressDialog = null;
-    private OnPostExecuteListener onPostExecuteListener = null;
-
-    public interface OnPostExecuteListener {
-        public void onSuccess();
-        public void onFailure();
-    }
-
-    public RetrieveAccessTokenTask(Activity activity) {
-        this.activity = activity;
-    }
-
-    public void setOnPostExecuteListener(OnPostExecuteListener listener) {
-        this.onPostExecuteListener = listener;
-    }
-
-    protected void onPreExecute() {
-        progressDialog = new ProgressDialog(activity);
-        progressDialog.setMessage("Authorizing...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+    public RetrieveAccessTokenTask(Context ctx) {
+        super(ctx);
     }
 
     protected JSONObject doInBackground(String... params) {
@@ -46,7 +23,7 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
     protected void onPostExecute(JSONObject token) {
         if (token != null) {
             try {
-                Preferences prefs = Preferences.getInstance(activity);
+                Preferences prefs = Preferences.getInstance(context);
 
                 Map<String, Object> data = new HashMap<String, Object>();
 
@@ -58,7 +35,7 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
                 prefs.saveUserData(data);
                 Log.d("quizlet", "preferences saved");
 
-                onPostExecuteListener.onSuccess();
+                onPostExecuteListener.onSuccess(token);
             } catch (Exception e) {
                 onPostExecuteListener.onFailure();
                 e.printStackTrace();
