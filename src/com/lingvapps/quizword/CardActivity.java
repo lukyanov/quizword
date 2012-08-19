@@ -16,24 +16,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CardActivity extends Activity {
-    private RealViewSwitcher realViewSwitcher = null;    
+    private RealViewSwitcher realViewSwitcher = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        realViewSwitcher = new RealViewSwitcher(
-                getApplicationContext());
-        if (realViewSwitcher == null) {
-            // renderCards();
-        }
-        //MainActivity.realViewSwitcher.setCurrentScreen(current_card); //
-        setContentView(realViewSwitcher);
+        // requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        // WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        // MainActivity.realViewSwitcher.setCurrentScreen(current_card); //
         renderCards();
-
     }
 
     @Override
@@ -44,37 +37,35 @@ public class CardActivity extends Activity {
 
     private void renderCards() {
         // TODO: Add cache and use it when changing screen orientation
-        try {
-            /*
-            QuizletRequestTask task = new QuizletRequestTask();
-            task.setObserver(new QuizletRequestTask.Callback() {
+        RetrieveSetTask task = new RetrieveSetTask(this);
+        task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener() {
 
-                public void onFailure() {
-
+            public void onSuccess(JSONObject result) {
+                try {
+                    realViewSwitcher = new RealViewSwitcher(
+                            getApplicationContext());
+                    setContentView(realViewSwitcher);
+                    fillViewSwitcher(result);
+                    // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+            }
 
-                public void onComplete(JSONObject JSON) {
-                    try {
-                        buildCards(JSON);
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            });
-            task.execute("https://api.quizlet.com/2.0/sets/12868186?client_id=Sb54cREqMM&whitespace=1");
-            */
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            public void onFailure() {
+
+            }
+
+        });
+        String token = Preferences.getInstance().getUserData(this, "access_token");
+        task.execute(token, Integer.valueOf(12868186).toString());
     }
 
-    private void buildCards(JSONObject JSON) throws JSONException {
+    private void fillViewSwitcher(JSONObject JSON) throws JSONException {
 
         JSONArray terms = (JSONArray) JSON.get("terms");
 
-        // add some views to it
         JSONObject t;
         for (int i = 0; i < terms.length(); i++) {
             t = terms.getJSONObject(i);
@@ -105,12 +96,4 @@ public class CardActivity extends Activity {
         }
 
     };
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // if (MainActivity.realViewSwitcher != null) {
-        // outState.putInt("current_card",
-        // MainActivity.realViewSwitcher.getCurrentScreen());
-        // }
-    }
 }

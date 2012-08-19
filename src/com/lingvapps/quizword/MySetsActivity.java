@@ -2,8 +2,12 @@ package com.lingvapps.quizword;
 
 import android.os.Bundle;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class MySetsActivity extends ListActivity {
 
@@ -26,6 +30,14 @@ public class MySetsActivity extends ListActivity {
         String user  = prefs.getUserData(this, "user_id");
         task.execute(token, user);
     }
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent;
+        intent = new Intent(this, CardActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
