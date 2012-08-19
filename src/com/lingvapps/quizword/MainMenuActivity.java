@@ -29,8 +29,6 @@ public class MainMenuActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Preferences.init(this);
-
         setContentView(R.layout.main_menu);
         String[] values = new String[] {
                 "View My Sets",
@@ -47,8 +45,8 @@ public class MainMenuActivity extends ListActivity {
         Intent intent;
         switch (position) {
         case 0:
-            Preferences prefs = Preferences.getInstance();
-            if (prefs.getUserData(this, "user_id") != null) {
+            Preferences prefs = Preferences.getInstance(this);
+            if (prefs.getUserData("user_id") != null) {
                 intent = new Intent(this, MySetsActivity.class);
             } else {
                 intent = new Intent(this, AccountSettingsActivity.class);

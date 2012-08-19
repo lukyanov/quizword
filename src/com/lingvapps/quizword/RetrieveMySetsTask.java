@@ -37,8 +37,8 @@ class RetrieveMySetsTask extends AsyncTask<String, Void, ArrayAdapter<String>> {
     }
 
     protected ArrayAdapter<String> doInBackground(String... params) {
-        String token = params[0];
-        String user = params[1];
+        String user = Preferences.getInstance(activity).getUserData("user_id");
+        String token = Preferences.getInstance(activity).getUserData("access_token");
         Log.d("quizlet", "loading my sets");
         try {
             JSONObject result = QuizletHTTP.requestMySets(token, user);

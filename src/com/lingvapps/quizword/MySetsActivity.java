@@ -24,11 +24,7 @@ public class MySetsActivity extends ListActivity {
             public void onFailure() {
             }
         });
-        Preferences.init(this);
-        Preferences prefs = Preferences.getInstance();
-        String token = prefs.getUserData(this, "access_token");
-        String user  = prefs.getUserData(this, "user_id");
-        task.execute(token, user);
+        task.execute();
     }
     
     @Override

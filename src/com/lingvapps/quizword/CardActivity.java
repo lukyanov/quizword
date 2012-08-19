@@ -58,8 +58,7 @@ public class CardActivity extends Activity {
             }
 
         });
-        String token = Preferences.getInstance().getUserData(this, "access_token");
-        task.execute(token, Integer.valueOf(12868186).toString());
+        task.execute(Integer.valueOf(12868186).toString());
     }
 
     private void fillViewSwitcher(JSONObject JSON) throws JSONException {

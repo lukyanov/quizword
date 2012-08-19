@@ -14,17 +14,20 @@ public class Preferences {
     
     private static Preferences instance = null;
     
-    public static void init(Context ctx) {
-        if (instance == null) {
-            instance = new Preferences();
-        }
-    }
+    private Context context = null;
     
-    public static Preferences getInstance() {
+    public static Preferences getInstance(Context ctx) {
+        if (instance == null) {
+            instance = new Preferences(ctx);
+        }
         return instance;
     }
     
-    public void saveUserData(Context context, Map<String, Object> data) {
+    private Preferences(Context ctx) {
+        context = ctx.getApplicationContext();
+    }
+    
+    public void saveUserData(Map<String, Object> data) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         Calendar cal = Calendar.getInstance();
@@ -40,7 +43,7 @@ public class Preferences {
             .commit();
     }
     
-    public void clearUserData(Context context) {
+    public void clearUserData() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit()
             .remove("quizlet_access_token")
@@ -50,11 +53,11 @@ public class Preferences {
             .commit();
     }
 
-    public String getUserData(Context context, String key) {
-        return getUserData(context, key, null);
+    public String getUserData(String key) {
+        return getUserData(key, null);
     }
     
-    public String getUserData(Context context, String key, String defaultValue) {
+    public String getUserData(String key, String defaultValue) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String value = prefs.getString("quizlet_" + key, defaultValue);
         if (key == "access_token" && value != null) {

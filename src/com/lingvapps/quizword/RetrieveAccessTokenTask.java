@@ -46,7 +46,7 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
     protected void onPostExecute(JSONObject token) {
         if (token != null) {
             try {
-                Preferences prefs = Preferences.getInstance();
+                Preferences prefs = Preferences.getInstance(activity);
 
                 Map<String, Object> data = new HashMap<String, Object>();
 
@@ -55,7 +55,7 @@ class RetrieveAccessTokenTask extends AsyncTask<String, Void, JSONObject> {
                 data.put("scope", token.getString("scope"));
                 data.put("user_id", token.getString("user_id"));
 
-                prefs.saveUserData(activity, data);
+                prefs.saveUserData(data);
                 Log.d("quizlet", "preferences saved");
 
                 onPostExecuteListener.onSuccess();

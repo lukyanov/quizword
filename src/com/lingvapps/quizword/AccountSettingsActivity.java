@@ -35,17 +35,15 @@ public class AccountSettingsActivity extends FragmentActivity {
         
         setContentView(R.layout.account_settings);
         
-        Preferences.init(this);
-        
         String[] values;
         ArrayAdapter<String> adapter;
         
-        Preferences prefs = Preferences.getInstance();
-        String token = prefs.getUserData(this, "access_token");
+        Preferences prefs = Preferences.getInstance(this);
+        String token = prefs.getUserData("access_token");
         
         if (token != null) {
             values = new String[] {
-                    "Logout (" + prefs.getUserData(this, "user_id", "") + ")"
+                    "Logout (" + prefs.getUserData("user_id", "") + ")"
             };
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -125,8 +123,8 @@ public class AccountSettingsActivity extends FragmentActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         switch (position) {
         case 0:
-            Preferences prefs = Preferences.getInstance();
-            String token = prefs.getUserData(this, "access_token");
+            Preferences prefs = Preferences.getInstance(this);
+            String token = prefs.getUserData("access_token");
             if (token == null) {            
                 Intent intent;
                 intent = new Intent(Intent.ACTION_VIEW);
@@ -137,7 +135,7 @@ public class AccountSettingsActivity extends FragmentActivity {
                 intent.setData(Uri.parse(authURL));
                 startActivity(intent);
             } else {
-                prefs.clearUserData(this);
+                prefs.clearUserData();
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
