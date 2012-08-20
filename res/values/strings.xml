@@ -8,6 +8,8 @@
     <string name="title_activity_account_settings">Account Settings</string>
     <string name="auth_error_title">Authorization Error</string>
     <string name="auth_error_message">Error occured when authorizing. Try again</string>
+    <string name="sync_error_title">Synchronization Error</string>
+    <string name="sync_error_message">Error occured when syncing. Try again</string>
     <string name="ok">OK</string>
     <string name="title_activity_my_sets">My Sets</string>
 

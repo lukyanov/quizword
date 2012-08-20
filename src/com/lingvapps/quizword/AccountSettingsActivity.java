@@ -46,7 +46,8 @@ public class AccountSettingsActivity extends FragmentActivity {
         
         if (token != null) {
             values = new String[] {
-                    "Logout (" + prefs.getUserData("user_id", "") + ")"
+                    "Logout (" + prefs.getUserData("user_id", "") + ")",
+                    "Sync"
             };
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -99,7 +100,7 @@ public class AccountSettingsActivity extends FragmentActivity {
                         restart();
                     }
                     public void onFailure() {
-                        showErrorMessage();
+                        showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
                     }
                 });
                 task.execute(code, redirectURI);
@@ -120,15 +121,15 @@ public class AccountSettingsActivity extends FragmentActivity {
     public void onResume() {
         super.onResume();
         if (flagAuthErrorOccured) {
-            showErrorMessage();
+            showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
         }
     }
     
     protected void onListItemClick(ListView l, View v, int position, long id) {
+        Preferences prefs = Preferences.getInstance(this);
+        String token = prefs.getUserData("access_token");
         switch (position) {
         case 0:
-            Preferences prefs = Preferences.getInstance(this);
-            String token = prefs.getUserData("access_token");
             if (token == null) {            
                 Intent intent;
                 intent = new Intent(Intent.ACTION_VIEW);
@@ -146,6 +147,21 @@ public class AccountSettingsActivity extends FragmentActivity {
                 overridePendingTransition(0,0);
             }
             break;
+        case 1:
+            if (token != null) {
+                SyncSetsTask task = new SyncSetsTask(this);
+                task.setMessage("Syncing...");
+                task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
+                    public void onSuccess(Boolean result) {
+                        restart();
+                    }
+                    public void onFailure() {
+                        showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
+                    }
+                });
+                task.execute();
+            }
+            break;
         default:
             String item = (String) menuListView.getAdapter().getItem(position);
             Toast.makeText(getApplicationContext(), item + " selected",
@@ -153,8 +169,8 @@ public class AccountSettingsActivity extends FragmentActivity {
         }
     }
     
-    protected void showErrorMessage() {
-        DialogFragment newFragment = AlertDialogFragment.newInstance(R.string.auth_error_title, R.string.auth_error_message);
+    protected void showErrorMessage(int title, int message) {
+        DialogFragment newFragment = AlertDialogFragment.newInstance(title, message);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 }
