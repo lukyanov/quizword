@@ -22,8 +22,6 @@ public class AccountSettingsActivity extends FragmentActivity {
     
     static ListView menuListView;
     
-    static final int DIALOG_ERROR_ID = 0;
-    
     private static String quizletAuthState = new BigInteger(32, new SecureRandom()).toString();
     private String redirectURI;
     
