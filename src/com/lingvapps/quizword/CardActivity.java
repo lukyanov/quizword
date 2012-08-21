@@ -48,7 +48,7 @@ public class CardActivity extends Activity {
             }
 
         });
-        task.execute(setId.toString());
+        task.execute(setId.toString(), setName);
     }
 
     private void fillViewSwitcher(CardSet set) {

@@ -1,10 +1,9 @@
 package com.lingvapps.quizword;
 
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 class RetrieveSetTask extends HTTPTask<String, CardSet> {
@@ -15,22 +14,20 @@ class RetrieveSetTask extends HTTPTask<String, CardSet> {
 
     protected CardSet doInBackground(String... params) {
         String setId = params[0];
-        String token = Preferences.getInstance(context).getUserData("access_token");
+        String setName = params[0];
         Log.d("quizlet", "loading my sets");
         try {
-            JSONObject result = QuizletHTTP.requestSet(token, Integer.parseInt(setId));
-            if (result != null) {
-                CardSet set = new CardSet(result.getInt("id"), result.getString("title"));
-                JSONArray terms = result.getJSONArray("terms");
-                JSONObject t;
-                for (int i = 0; i < result.length(); i++) {
-                    t = terms.getJSONObject(i);
-                    set.addCard(new Card(t.getString("term"), t.getString("definition")));
-                }
-                return set;
-            } else {
-                return null;
+            LocalStorageHelper storageHelper = new LocalStorageHelper(context);
+            SQLiteDatabase db = storageHelper.getWritableDatabase();
+            String[] fields = {"term", "definition"};
+            String[] whereArgs = {setId};
+            // TODO: create index for set_id
+            Cursor cursor = db.query("cards", fields, "set_id = ?", whereArgs, null, null, null);
+            CardSet set = new CardSet(Integer.parseInt(setId), setName);
+            while (cursor.moveToNext()) {
+                set.addCard(new Card(cursor.getString(0), cursor.getString(1)));
             }
+            return set;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

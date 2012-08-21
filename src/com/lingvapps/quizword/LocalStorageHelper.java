@@ -10,6 +10,7 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "quizword";
 
     private static final String CARD_TABLE_NAME = "cards";
+    // TODO: create index and foreign key?
     private static final String CARD_TABLE_CREATE =
                 "CREATE TABLE " + CARD_TABLE_NAME + " (" +
                 "id int primary key, " +

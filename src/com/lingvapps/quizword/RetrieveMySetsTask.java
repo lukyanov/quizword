@@ -1,10 +1,8 @@
 package com.lingvapps.quizword;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
-import android.util.Log;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
 class RetrieveMySetsTask extends HTTPTask<String, ArrayAdapter<CardSet>> {
@@ -14,26 +12,21 @@ class RetrieveMySetsTask extends HTTPTask<String, ArrayAdapter<CardSet>> {
     }
 
     protected ArrayAdapter<CardSet> doInBackground(String... params) {
-        String user = Preferences.getInstance(context).getUserData("user_id");
-        String token = Preferences.getInstance(context).getUserData(
-                "access_token");
-        Log.d("quizlet", "loading my sets");
         try {
-            JSONObject result = QuizletHTTP.requestMySets(token, user);
-            if (result != null) {
-                JSONArray ss = result.getJSONArray("sets");
-                CardSet[] sets = new CardSet[ss.length()];
-                for (int i = 0; i < ss.length(); i++) {
-                    JSONObject obj = ss.getJSONObject(i);
-                    sets[i] = new CardSet(obj.getInt("id"),
-                            obj.getString("title"), obj.getInt("term_count"));
-                }
-                return new ArrayAdapter<CardSet>(context,
-                        android.R.layout.simple_list_item_1,
-                        android.R.id.text1, sets);
-            } else {
-                return null;
+            LocalStorageHelper storageHelper = new LocalStorageHelper(context);
+            SQLiteDatabase db = storageHelper.getReadableDatabase();
+            String[] fields = {"id", "name", "term_count"};
+            Cursor cursor = db.query("sets", fields, null, null, null, null, null);
+            CardSet[] sets = new CardSet[cursor.getCount()];
+            int i = 0;
+            while (cursor.moveToNext()) {
+                sets[i] = new CardSet(cursor.getInt(0),
+                        cursor.getString(1), cursor.getInt(2));
+                i++;
             }
+            return new ArrayAdapter<CardSet>(context,
+                    android.R.layout.simple_list_item_1,
+                    android.R.id.text1, sets);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

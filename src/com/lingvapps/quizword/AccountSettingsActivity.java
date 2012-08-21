@@ -154,6 +154,8 @@ public class AccountSettingsActivity extends FragmentActivity {
                 task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
                     public void onSuccess(Boolean result) {
                         restart();
+                        Toast.makeText(getApplicationContext(), "Synced",
+                                Toast.LENGTH_LONG).show();
                     }
                     public void onFailure() {
                         showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);

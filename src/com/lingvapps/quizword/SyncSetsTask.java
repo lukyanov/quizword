@@ -32,9 +32,9 @@ class SyncSetsTask extends HTTPTask<String, Boolean> {
                     values.put("id", obj.getInt("id"));
                     values.put("name", obj.getString("title"));
                     values.put("term_count", obj.getString("term_count"));
-                    Long setId = db.insert("sets", null, values);
+                    db.insert("sets", null, values);
                     
-                    fillCardsTable(db, setId, obj.getJSONArray("terms"));
+                    fillCardsTable(db, obj.getInt("id"), obj.getJSONArray("terms"));
                 }
                 db.close();
                 return true;
@@ -49,7 +49,7 @@ class SyncSetsTask extends HTTPTask<String, Boolean> {
         }
     }
     
-    private void fillCardsTable(SQLiteDatabase db, Long setId, JSONArray terms) throws JSONException, SQLiteException {
+    private void fillCardsTable(SQLiteDatabase db, Integer setId, JSONArray terms) throws JSONException, SQLiteException {
         for (int i = 0; i < terms.length(); i++) {
             JSONObject obj = terms.getJSONObject(i);
             ContentValues values = new ContentValues();
