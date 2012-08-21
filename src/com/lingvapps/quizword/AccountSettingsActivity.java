@@ -6,11 +6,16 @@ import java.security.SecureRandom;
 import org.json.JSONObject;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -27,6 +32,7 @@ public class AccountSettingsActivity extends FragmentActivity {
     
     private Boolean flagAuthErrorOccured = false;
 
+    @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +41,11 @@ public class AccountSettingsActivity extends FragmentActivity {
         Log.d("auth", "my state: " + quizletAuthState);
         
         setContentView(R.layout.account_settings);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            final ActionBar bar = getActionBar();
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
         
         String[] values;
         ArrayAdapter<String> adapter;
@@ -65,12 +76,26 @@ public class AccountSettingsActivity extends FragmentActivity {
         });
     }
     
-    @Override
-    public void onBackPressed() {
+    private void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        finish();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        startMainMenuActivity();
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startMainMenuActivity();
+                return true;
+            default:
+                return false;
+        }
     }
     
     @Override
