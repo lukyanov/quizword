@@ -29,6 +29,8 @@ public class MySetsActivity extends FragmentActivity {
         // TODO: deny screen orientation change when syncing
         
         // TODO: make common layout for all menu-like views
+        
+        // http://blog.webagesolutions.com/archives/458
         setContentView(R.layout.my_sets);
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

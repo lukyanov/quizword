@@ -30,6 +30,10 @@ public class MainMenuActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.main_menu);
+        // TODO:
+        //setListAdapter(ArrayAdapter.createFromResource(getActivity()
+        //        .getApplicationContext(), R.array.tut_titles,
+        //        R.layout.list_item));
         String[] values = new String[] {
                 "View My Sets",
                 "Find Public Sets",
