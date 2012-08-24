@@ -6,17 +6,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class LocalStorageHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "quizword";
 
     private static final String CARD_TABLE_NAME = "cards";
-    // TODO: create index and foreign key?
     private static final String CARD_TABLE_CREATE =
                 "CREATE TABLE " + CARD_TABLE_NAME + " (" +
                 "id int primary key, " +
                 "set_id int, " +
                 "term varchar(255), " +
                 "definition varchar(255));";
+    private static final String CARD_INDEX_CREATE =
+            "CREATE INDEX " + CARD_TABLE_NAME + "_set_id ON " +
+            CARD_TABLE_NAME + " (set_id)";
 
     private static final String SET_TABLE_NAME = "sets";
     private static final String SET_TABLE_CREATE =
@@ -33,11 +35,13 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SET_TABLE_CREATE);
         db.execSQL(CARD_TABLE_CREATE);
+        db.execSQL(CARD_INDEX_CREATE);
     }
     
     @Override
-    public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion == 1 && newVersion == 2) {
+            db.execSQL(CARD_INDEX_CREATE);
+        }
     }
 }

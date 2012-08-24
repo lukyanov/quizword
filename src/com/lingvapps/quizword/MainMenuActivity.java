@@ -1,6 +1,5 @@
 package com.lingvapps.quizword;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,33 +14,17 @@ import android.widget.Toast;
  * - http://tools.android.com/recent/lintapicheck/
  * - http://vlad8.com/tech/2011/07/android-intents-tutorial/
  *
- * TODO:
- * - final
- * - Activity vs ListActivity
- * - Callbacks
- * - new Object() { ... }
  */
 
-public class MainMenuActivity extends ListActivity {
+public class MainMenuActivity extends ListMenuActivity {
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.main_menu);
-        // TODO:
-        //setListAdapter(ArrayAdapter.createFromResource(getActivity()
-        //        .getApplicationContext(), R.array.tut_titles,
-        //        R.layout.list_item));
-        String[] values = new String[] {
-                "View My Sets",
-                "Find Public Sets",
-                "Account Settings"
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        setListAdapter(adapter);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.main_menu, android.R.layout.simple_list_item_1);
+        drawMenuList(adapter);
     }
 
     @Override
@@ -62,7 +45,7 @@ public class MainMenuActivity extends ListActivity {
             startActivity(intent);
             break;
         default:
-            String item = (String) this.getListAdapter().getItem(position);
+            String item = (String) menuListView.getAdapter().getItem(position);
             Toast.makeText(getApplicationContext(), item + " selected",
                     Toast.LENGTH_LONG).show();
         }

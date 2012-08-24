@@ -8,24 +8,16 @@ import org.json.JSONObject;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AccountSettingsActivity extends FragmentActivity {
-    
-    static ListView menuListView;
+public class AccountSettingsActivity extends ListMenuActivity {
     
     private static String quizletAuthState = new BigInteger(32, new SecureRandom()).toString();
     private String redirectURI;
@@ -40,62 +32,32 @@ public class AccountSettingsActivity extends FragmentActivity {
         redirectURI = getString(R.string.app_id) + ":/after_auth";
         Log.d("auth", "my state: " + quizletAuthState);
         
-        setContentView(R.layout.account_settings);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             final ActionBar bar = getActionBar();
             bar.setDisplayHomeAsUpEnabled(true);
         }
         
-        String[] values;
-        ArrayAdapter<String> adapter;
-        
         Preferences prefs = Preferences.getInstance(this);
         String token = prefs.getUserData("access_token");
         
+        ArrayAdapter<CharSequence> adapter;
+        
         if (token != null) {
-            values = new String[] {
-                    "Logout (" + prefs.getUserData("user_id", "") + ")",
-                    "Sync"
-            };
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+            String[] array = getResources().getStringArray(R.array.settings_menu_logged_in);
+            array[0] = array[0] + " (" + prefs.getUserData("user_id", "") + ")";
+            adapter = new ArrayAdapter<CharSequence>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, array);
         } else {
-            values = new String[] {
-                    "Login / Register"
-            };
-            adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+            adapter = ArrayAdapter.createFromResource(this,
+                    R.array.settings_menu, android.R.layout.simple_list_item_1);
         }
-        menuListView = (ListView) findViewById(R.id.account_settings_menu);
-        menuListView.setAdapter(adapter);
-        menuListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                onListItemClick((ListView) l, v, position, id);
-            }
-        });
-    }
-    
-    private void startMainMenuActivity() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        
+        drawMenuList(adapter);
     }
     
     @Override
     public void onBackPressed() {
         startMainMenuActivity();
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                startMainMenuActivity();
-                return true;
-            default:
-                return false;
-        }
     }
     
     @Override
@@ -120,6 +82,7 @@ public class AccountSettingsActivity extends FragmentActivity {
                 task.setMessage("Authorizing...");
                 task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener<JSONObject>() {
                     public void onSuccess(JSONObject result) {
+                        // TODO: try not to do restart
                         restart();
                     }
                     public void onFailure() {
@@ -133,13 +96,6 @@ public class AccountSettingsActivity extends FragmentActivity {
         }
     }
     
-    public void restart() {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-        overridePendingTransition(0,0);
-    }
-    
     @Override
     public void onResume() {
         super.onResume();
@@ -147,7 +103,8 @@ public class AccountSettingsActivity extends FragmentActivity {
             showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
         }
     }
-    
+
+    @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Preferences prefs = Preferences.getInstance(this);
         String token = prefs.getUserData("access_token");
@@ -192,10 +149,5 @@ public class AccountSettingsActivity extends FragmentActivity {
             Toast.makeText(getApplicationContext(), item + " selected",
                     Toast.LENGTH_LONG).show();
         }
-    }
-    
-    protected void showErrorMessage(int title, int message) {
-        DialogFragment newFragment = AlertDialogFragment.newInstance(title, message);
-        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 }

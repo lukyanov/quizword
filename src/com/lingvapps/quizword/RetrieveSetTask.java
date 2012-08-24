@@ -21,7 +21,6 @@ class RetrieveSetTask extends HTTPTask<String, CardSet> {
             SQLiteDatabase db = storageHelper.getWritableDatabase();
             String[] fields = {"term", "definition"};
             String[] whereArgs = {setId};
-            // TODO: create index for set_id
             Cursor cursor = db.query("cards", fields, "set_id = ?", whereArgs, null, null, null);
             CardSet set = new CardSet(Integer.parseInt(setId), setName);
             while (cursor.moveToNext()) {

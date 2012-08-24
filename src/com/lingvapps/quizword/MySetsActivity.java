@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,62 +14,41 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MySetsActivity extends FragmentActivity {
-
-    private static ListView menuListView;
+public class MySetsActivity extends ListMenuActivity {
 
     @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // TODO: not to load data again after screen orientation change
-        // TODO: deny screen orientation change when syncing
-        
-        // TODO: make common layout for all menu-like views
-        
-        // http://blog.webagesolutions.com/archives/458
-        setContentView(R.layout.my_sets);
-        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             final ActionBar bar = getActionBar();
             bar.setDisplayHomeAsUpEnabled(true);
         }
 
-        menuListView = (ListView) findViewById(R.id.my_sets_menu);
-
+        loadSets();
+    }
+    
+    void loadSets() {
         RetrieveMySetsTask task = new RetrieveMySetsTask(this);
         task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<CardSet>>() {
             public void onSuccess(ArrayAdapter<CardSet> adapter) {
                 if (adapter.getCount() > 0) {
-                    menuListView.setAdapter(adapter);
-                    menuListView.setOnItemClickListener(new OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                            onListItemClick((ListView) l, v, position, id);
-                        }
-                    });
+                    drawMenuList(adapter);
                 } else {
-                    showSyncMenu();
+                    drawSyncMenu();
                 }
             }
             public void onFailure() {
-                showSyncMenu();
+                drawSyncMenu();
             }
         });
         task.execute();
     }
-    
-    private void startMainMenuActivity() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
 
-
-    protected void showSyncMenu() {
-        String[] values = new String[] {
-                "Sync"
-        };
+    protected void drawSyncMenu() {
+        String item = getString(R.string.menu_sync);
+        String[] values = new String[] { item };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
         menuListView.setAdapter(adapter);
@@ -80,10 +57,9 @@ public class MySetsActivity extends FragmentActivity {
                 onSyncMenuListItemClick((ListView) l, v, position, id);
             }
         });
-        // TODO: maybe this is the case not to restart activity
-        //menuListView.invalidateViews();
     }
 
+    @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent;
         intent = new Intent(this, CardActivity.class);
@@ -99,8 +75,7 @@ public class MySetsActivity extends FragmentActivity {
         task.setMessage("Syncing...");
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
             public void onSuccess(Boolean result) {
-                // TODO: try not to do restart
-                restart();
+                loadSets();
                 Toast.makeText(getApplicationContext(), "Synced",
                         Toast.LENGTH_LONG).show();
             }
@@ -110,7 +85,6 @@ public class MySetsActivity extends FragmentActivity {
         });
         task.execute();
     }
-
 
     protected void onSyncMenuListItemClick(ListView l, View v, int position, long id) {
         switch (position) {
@@ -139,18 +113,4 @@ public class MySetsActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.my_sets, menu);
         return true;
     }
-
-    public void restart() {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-        overridePendingTransition(0,0);
-    }
-
-    // TODO: remove duplicated function
-    protected void showErrorMessage(int title, int message) {
-        DialogFragment newFragment = AlertDialogFragment.newInstance(title, message);
-        newFragment.show(getSupportFragmentManager(), "dialog");
-    }
-
 }

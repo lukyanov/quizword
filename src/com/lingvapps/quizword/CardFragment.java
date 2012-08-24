@@ -84,7 +84,6 @@ public class CardFragment extends Fragment {
 
     private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
         public void onScreenSwitched(int screen) {
-            // TODO: use getUserVisibleHint
             // this method is executed if a screen has been activated, i.e. the
             // screen is completely visible
             // and the animation has stopped (might be useful for removing /
