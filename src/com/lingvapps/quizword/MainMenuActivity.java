@@ -5,20 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-/*
- * Useful URLs:
- * - http://www.vogella.com/articles/AndroidListView/article.html#listview
- * - http://megadarja.blogspot.com/2010/07/android.html
- * - http://tools.android.com/recent/lintapicheck/
- * - http://vlad8.com/tech/2011/07/android-intents-tutorial/
- *
- */
 
 public class MainMenuActivity extends ListMenuActivity {
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +33,6 @@ public class MainMenuActivity extends ListMenuActivity {
             intent = new Intent(this, AccountSettingsActivity.class);
             startActivity(intent);
             break;
-        default:
-            String item = (String) menuListView.getAdapter().getItem(position);
-            Toast.makeText(getApplicationContext(), item + " selected",
-                    Toast.LENGTH_LONG).show();
         }
     }
 }

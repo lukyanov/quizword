@@ -44,4 +44,10 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
             db.execSQL(CARD_INDEX_CREATE);
         }
     }
+    
+    public void clear_db() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(CARD_TABLE_NAME, null, null);
+        db.delete(SET_TABLE_NAME, null, null);
+    }
 }

@@ -4,9 +4,8 @@ package com.lingvapps.quizword;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-class RetrieveSetTask extends HTTPTask<String, CardSet> {
+class RetrieveSetTask extends BackgroundTask<String, CardSet> {
 
     public RetrieveSetTask(Context ctx) {
         super(ctx);
@@ -15,7 +14,6 @@ class RetrieveSetTask extends HTTPTask<String, CardSet> {
     protected CardSet doInBackground(String... params) {
         String setId = params[0];
         String setName = params[0];
-        Log.d("quizlet", "loading my sets");
         try {
             LocalStorageHelper storageHelper = new LocalStorageHelper(context);
             SQLiteDatabase db = storageHelper.getWritableDatabase();

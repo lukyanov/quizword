@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
-class RetrieveMySetsTask extends HTTPTask<String, ArrayAdapter<CardSet>> {
+class RetrieveMySetsTask extends BackgroundTask<String, ArrayAdapter<CardSet>> {
 
     public RetrieveMySetsTask(Context ctx) {
         super(ctx);

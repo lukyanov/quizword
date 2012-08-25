@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
-class RetrieveAccessTokenTask extends HTTPTask<String, JSONObject> {
+class RetrieveAccessTokenTask extends BackgroundTask<String, JSONObject> {
 
     public RetrieveAccessTokenTask(Context ctx) {
         super(ctx);

@@ -1,6 +1,9 @@
 package com.lingvapps.quizword;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +23,14 @@ abstract class ListMenuActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_menu);
         menuListView = (ListView) findViewById(android.R.id.list);
+    }
+    
+    @TargetApi(11)
+    protected void setActionBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            final ActionBar bar = getActionBar();
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
     }
     
     protected void drawMenuList(ArrayAdapter<?> adapter) {

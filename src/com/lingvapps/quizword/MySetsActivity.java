@@ -1,9 +1,6 @@
 package com.lingvapps.quizword;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,16 +13,10 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MySetsActivity extends ListMenuActivity {
 
-    @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            final ActionBar bar = getActionBar();
-            bar.setDisplayHomeAsUpEnabled(true);
-        }
-
+        setActionBar();
         loadSets();
     }
     
@@ -70,7 +61,6 @@ public class MySetsActivity extends ListMenuActivity {
     }
     
     protected void executeSyncTask() {
-        // TODO: move to a separate class/function
         SyncSetsTask task = new SyncSetsTask(this);
         task.setMessage("Syncing...");
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {

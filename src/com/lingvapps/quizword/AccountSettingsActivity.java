@@ -6,12 +6,8 @@ import java.security.SecureRandom;
 import org.json.JSONObject;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -24,19 +20,15 @@ public class AccountSettingsActivity extends ListMenuActivity {
     
     private Boolean flagAuthErrorOccured = false;
 
-    @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         redirectURI = getString(R.string.app_id) + ":/after_auth";
-        Log.d("auth", "my state: " + quizletAuthState);
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            final ActionBar bar = getActionBar();
-            bar.setDisplayHomeAsUpEnabled(true);
-        }
-        
+        setActionBar();
+        drawMenuList();
+    }
+
+    private void drawMenuList() {
         Preferences prefs = Preferences.getInstance(this);
         String token = prefs.getUserData("access_token");
         
@@ -70,30 +62,30 @@ public class AccountSettingsActivity extends ListMenuActivity {
         if (data == null) {
             return;
         }
-        Log.d("quizlet", "data: " + data.toString());
 
         if (data.getPath().equals("/after_auth")) {
-            Log.d("quizlet", "my state: " + quizletAuthState +
-                    ", request state: " + data.getQueryParameter("state"));
             if (data.getQueryParameter("state").equals(quizletAuthState) &&
                     data.getQueryParameter("error") == null) {
                 String code = intent.getData().getQueryParameter("code");
-                RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(this);
-                task.setMessage("Authorizing...");
-                task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener<JSONObject>() {
-                    public void onSuccess(JSONObject result) {
-                        // TODO: try not to do restart
-                        restart();
-                    }
-                    public void onFailure() {
-                        showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
-                    }
-                });
-                task.execute(code, redirectURI);
+                retrieveAccessToken(code);
             } else {
                 flagAuthErrorOccured = true;
             }
         }
+    }
+    
+    private void retrieveAccessToken(String code) {
+        RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(this);
+        task.setMessage("Authorizing...");
+        task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener<JSONObject>() {
+            public void onSuccess(JSONObject result) {
+                drawMenuList();
+            }
+            public void onFailure() {
+                showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
+            }
+        });
+        task.execute(code, redirectURI);
     }
     
     @Override
@@ -110,44 +102,51 @@ public class AccountSettingsActivity extends ListMenuActivity {
         String token = prefs.getUserData("access_token");
         switch (position) {
         case 0:
-            if (token == null) {            
-                Intent intent;
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                String authURL = QuizletHTTP.getAuthorizitionURL("read",
-                        quizletAuthState, redirectURI);
-                Log.d("quizlet", "Quizlet Auth URL: " + authURL);
-                intent.setData(Uri.parse(authURL));
-                startActivity(intent);
+            if (token == null) {
+                login();
             } else {
-                prefs.clearUserData();
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-                overridePendingTransition(0,0);
+                logout();
             }
             break;
         case 1:
             if (token != null) {
-                SyncSetsTask task = new SyncSetsTask(this);
-                task.setMessage("Syncing...");
-                task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
-                    public void onSuccess(Boolean result) {
-                        restart();
-                        Toast.makeText(getApplicationContext(), "Synced",
-                                Toast.LENGTH_LONG).show();
-                    }
-                    public void onFailure() {
-                        showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
-                    }
-                });
-                task.execute();
+                executeSyncTask();
             }
             break;
-        default:
-            String item = (String) menuListView.getAdapter().getItem(position);
-            Toast.makeText(getApplicationContext(), item + " selected",
-                    Toast.LENGTH_LONG).show();
         }
+    }
+    
+    protected void login() {
+        Intent intent;
+        intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        String authURL = QuizletHTTP.getAuthorizitionURL("read",
+                quizletAuthState, redirectURI);
+        intent.setData(Uri.parse(authURL));
+        startActivity(intent);
+    }
+    
+    protected void logout() {
+        Preferences prefs = Preferences.getInstance(this);
+        prefs.clearUserData();
+        LocalStorageHelper storageHelper = new LocalStorageHelper(this.getApplicationContext());
+        storageHelper.clear_db();
+        drawMenuList();
+    }
+    
+    protected void executeSyncTask() {
+        SyncSetsTask task = new SyncSetsTask(this);
+        task.setMessage("Syncing...");
+        task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
+            public void onSuccess(Boolean result) {
+                drawMenuList();
+                Toast.makeText(getApplicationContext(), "Synced",
+                        Toast.LENGTH_LONG).show();
+            }
+            public void onFailure() {
+                showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
+            }
+        });
+        task.execute();
     }
 }

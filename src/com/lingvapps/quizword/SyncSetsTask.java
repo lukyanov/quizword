@@ -9,7 +9,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-class SyncSetsTask extends HTTPTask<String, Boolean> {
+class SyncSetsTask extends BackgroundTask<String, Boolean> {
 
     public SyncSetsTask(Context ctx) {
         super(ctx);
@@ -20,9 +20,8 @@ class SyncSetsTask extends HTTPTask<String, Boolean> {
         String token = Preferences.getInstance(context).getUserData(
                 "access_token");
         LocalStorageHelper storageHelper = new LocalStorageHelper(context);
+        storageHelper.clear_db();
         SQLiteDatabase db = storageHelper.getWritableDatabase();
-        db.delete("cards", null, null);
-        db.delete("sets", null, null);
         try {
             JSONArray ss = QuizletHTTP.requestMySetsFullDetails(token, user);
             if (ss != null) {

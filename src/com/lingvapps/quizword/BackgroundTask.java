@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-abstract class HTTPTask<T1, T2> extends AsyncTask<T1, Void, T2> {
+abstract class BackgroundTask<T1, T2> extends AsyncTask<T1, Void, T2> {
 
     protected Context context = null;
     protected ProgressDialog progressDialog = null;
@@ -17,7 +17,7 @@ abstract class HTTPTask<T1, T2> extends AsyncTask<T1, Void, T2> {
         public void onFailure();
     }
 
-    public HTTPTask(Context ctx) {
+    public BackgroundTask(Context ctx) {
         super();
         this.context = ctx;
     }
