@@ -14,6 +14,11 @@
     <string name="sync_error_title">Synchronization Error</string>
     <string name="sync_error_message">Error occured when syncing. Try again</string>
     
+    <string name="syncing_message">Syncing&#8230;</string>
+    <string name="load_message">Loading&#8230;</string>
+    <string name="authorizing_message">Authorizing&#8230;</string>
+    <string name="synced_message">Synced</string>
+    
     <string name="ok">OK</string>
     
     <string-array name="main_menu">

@@ -8,11 +8,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.widget.Toast;
 
 class SyncSetsTask extends BackgroundTask<String, Boolean> {
 
     public SyncSetsTask(Context ctx) {
         super(ctx);
+        setMessage(R.string.syncing_message);
     }
 
     protected Boolean doInBackground(String... params) {
@@ -64,6 +66,7 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
     protected void onPostExecute(Boolean result) {
         if (result) {
             onPostExecuteListener.onSuccess(result);
+            Toast.makeText(context, R.string.synced_message, Toast.LENGTH_LONG).show();
         } else {
             onPostExecuteListener.onFailure();
         }

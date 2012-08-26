@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MySetsActivity extends ListMenuActivity {
@@ -62,12 +61,9 @@ public class MySetsActivity extends ListMenuActivity {
     
     protected void executeSyncTask() {
         SyncSetsTask task = new SyncSetsTask(this);
-        task.setMessage("Syncing...");
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
             public void onSuccess(Boolean result) {
                 loadSets();
-                Toast.makeText(getApplicationContext(), "Synced",
-                        Toast.LENGTH_LONG).show();
             }
             public void onFailure() {
                 showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);

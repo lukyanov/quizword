@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class AccountSettingsActivity extends ListMenuActivity {
     
@@ -76,7 +75,7 @@ public class AccountSettingsActivity extends ListMenuActivity {
     
     private void retrieveAccessToken(String code) {
         RetrieveAccessTokenTask task = new RetrieveAccessTokenTask(this);
-        task.setMessage("Authorizing...");
+        task.setMessage(R.string.authorizing_message);
         task.setOnPostExecuteListener(new RetrieveAccessTokenTask.OnPostExecuteListener<JSONObject>() {
             public void onSuccess(JSONObject result) {
                 drawMenuList();
@@ -136,12 +135,9 @@ public class AccountSettingsActivity extends ListMenuActivity {
     
     protected void executeSyncTask() {
         SyncSetsTask task = new SyncSetsTask(this);
-        task.setMessage("Syncing...");
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
             public void onSuccess(Boolean result) {
                 drawMenuList();
-                Toast.makeText(getApplicationContext(), "Synced",
-                        Toast.LENGTH_LONG).show();
             }
             public void onFailure() {
                 showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);

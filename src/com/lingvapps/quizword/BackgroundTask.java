@@ -10,7 +10,7 @@ abstract class BackgroundTask<T1, T2> extends AsyncTask<T1, Void, T2> {
     protected Context context = null;
     protected ProgressDialog progressDialog = null;
     protected OnPostExecuteListener<T2> onPostExecuteListener = null;
-    protected String message = "Loading...";
+    protected int messageId = R.string.load_message;
     
     public interface OnPostExecuteListener<T> {
         public void onSuccess(T result);
@@ -26,17 +26,19 @@ abstract class BackgroundTask<T1, T2> extends AsyncTask<T1, Void, T2> {
         this.onPostExecuteListener = listener;
     }
     
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(int messageId) {
+        this.messageId = messageId;
     }
 
+    @Override
     protected void onPreExecute() {
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage(message);
+        progressDialog.setMessage(context.getString(messageId));
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
+    @Override
     protected void onPostExecute(T2 result) {
         if (result != null) {
             try {
