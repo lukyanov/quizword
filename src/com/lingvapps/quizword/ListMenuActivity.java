@@ -57,6 +57,7 @@ abstract class ListMenuActivity extends FragmentActivity {
 
     protected void startMainMenuActivity() {
         Intent intent = new Intent(this, MainMenuActivity.class);
+        // TODO: fix back behavior
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

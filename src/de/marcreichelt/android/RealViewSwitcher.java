@@ -57,26 +57,26 @@ public class RealViewSwitcher extends ViewGroup {
 
 	}
 
-	private static final int SNAP_VELOCITY = 1000;
-	private static final int INVALID_SCREEN = -1;
+	protected static final int SNAP_VELOCITY = 1000;
+	protected static final int INVALID_SCREEN = -1;
 
-	private Scroller mScroller;
-	private VelocityTracker mVelocityTracker;
+	protected Scroller mScroller;
+	protected VelocityTracker mVelocityTracker;
 
-	private final static int TOUCH_STATE_REST = 0;
-	private final static int TOUCH_STATE_SCROLLING = 1;
+	protected final static int TOUCH_STATE_REST = 0;
+	protected final static int TOUCH_STATE_SCROLLING = 1;
 
-	private int mTouchState = TOUCH_STATE_REST;
+	protected int mTouchState = TOUCH_STATE_REST;
 
-	private float mLastMotionX;
-	private int mTouchSlop;
-	private int mMaximumVelocity;
-	private int mCurrentScreen;
-	private int mNextScreen = INVALID_SCREEN;
+	protected float mLastMotionX;
+	protected int mTouchSlop;
+	protected int mMaximumVelocity;
+	protected int mCurrentScreen;
+	protected int mNextScreen = INVALID_SCREEN;
 
-	private boolean mFirstLayout = true;
+	protected boolean mFirstLayout = true;
 
-	private OnScreenSwitchListener mOnScreenSwitchListener;
+	protected OnScreenSwitchListener mOnScreenSwitchListener;
 
 	public RealViewSwitcher(Context context) {
 		super(context);
@@ -153,12 +153,14 @@ public class RealViewSwitcher extends ViewGroup {
 			/*
 			 * If being flinged and user touches, stop the fling. isFinished will be false if being flinged.
 			 */
-			if (!mScroller.isFinished()) {
-				mScroller.abortAnimation();
-			}
+			//if (!mScroller.isFinished()) {
+			//	mScroller.abortAnimation();
+			//}
 
-			// Remember where the motion event started
-			mLastMotionX = x;
+		    if (mScroller.isFinished()) {
+		        // Remember where the motion event started
+		        mLastMotionX = x;
+		    }
 
 			mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST : TOUCH_STATE_SCROLLING;
 
