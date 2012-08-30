@@ -12,13 +12,12 @@ public class ViewSwitcher extends RealViewSwitcher {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!mScroller.isFinished()) {
-            return true;
-        }
         switch (ev.getAction()) {
         case MotionEvent.ACTION_DOWN:
-            mLastMotionX = ev.getX();
-            mTouchState = TOUCH_STATE_REST;
+            if (mScroller.isFinished()) {
+                mLastMotionX = ev.getX();
+                mTouchState = TOUCH_STATE_REST;
+            }
             return false;
         case MotionEvent.ACTION_UP:
             return false;
