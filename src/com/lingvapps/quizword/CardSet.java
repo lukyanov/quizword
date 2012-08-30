@@ -1,6 +1,7 @@
 package com.lingvapps.quizword;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class CardSet implements Iterable<Card> {
@@ -57,5 +58,9 @@ public class CardSet implements Iterable<Card> {
     
     public String toString() {
         return name + " (" + getCardsCount().toString() + ")";
+    }
+
+    public void shuffle() {
+        Collections.shuffle(cards);
     }
 }

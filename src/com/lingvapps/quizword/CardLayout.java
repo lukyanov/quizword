@@ -16,15 +16,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class CardLayout extends LinearLayout {
-    
+
     static final public int SIDE_TERM = 0;
     static final public int SIDE_DEFINITION = 1;
     static final public int SIDE_BOTH = 2;
-    
+
     private int currentSide = SIDE_BOTH;
-    
+
     private Interpolator accelerator = new AccelerateInterpolator();
     private Interpolator decelerator = new DecelerateInterpolator();
+
+    private OnTurnListener onTurnListener = null;
+    
+    public interface OnTurnListener {
+        public void onStop();
+    }
 
     public CardLayout(Context context) {
         super(context);
@@ -32,7 +38,7 @@ public class CardLayout extends LinearLayout {
         layoutInflater.inflate(R.layout.card, this);
         //setRotationY(-90f);
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         Log.d("quizword", Integer.valueOf(ev.getAction()).toString());
@@ -41,24 +47,24 @@ public class CardLayout extends LinearLayout {
             return true;
         case MotionEvent.ACTION_UP:
             if (currentSide != SIDE_BOTH) {
-                flip(this);
+                flip();
             }
             return true;
         default:
             return false;
         }
     }
-    
+
     public void setTerm(String term) {
         TextView textView = (TextView) findViewById(R.id.card_term);
         textView.setText(term);
     }
-    
+
     public void setDefinition(String definition) {
         TextView textView = (TextView) findViewById(R.id.card_definition);
         textView.setText(definition);
     }
-    
+
     public void setCurrentSide(int side) {
         if (currentSide == side) {
             return;
@@ -85,11 +91,15 @@ public class CardLayout extends LinearLayout {
         findViewById(R.id.card_definition).setVisibility(definitionVisibility);
         currentSide = side;
     }
-    
+
+    public void setOnTurnListener(OnTurnListener listener) {
+        onTurnListener = listener;
+    }
+
     private void swapSides() {
         TextView termView = ((TextView) findViewById(R.id.card_term));
         TextView definitionView = ((TextView) findViewById(R.id.card_definition));
-        
+
         CharSequence term = termView.getText();
         termView.setText(definitionView.getText());
         definitionView.setText(term);
@@ -100,13 +110,13 @@ public class CardLayout extends LinearLayout {
             currentSide = SIDE_TERM;
         }
     }
-    
+
     @TargetApi(12)
-    private void flip(View v) {
+    private void flip() {
         View view = this;
         //float scale = getResources().getDisplayMetrics().density;
         //view.setCameraDistance(1.5f * scale);
-        
+
         ObjectAnimator visToInvis = ObjectAnimator.ofFloat(view, "rotationY", 0f, 90f);
         visToInvis.setDuration(300);
         visToInvis.setInterpolator(accelerator);
@@ -123,6 +133,20 @@ public class CardLayout extends LinearLayout {
             }
         });
         visToInvis.start();
+    }
+
+    public void turn() {
+        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotation", 0.0f, 3*360.0f);
+        anim.setDuration(1000);
+        if (onTurnListener != null) {
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator anim) {
+                    onTurnListener.onStop();
+                }
+            });
+        }
+        anim.start();
     }
 
 }
