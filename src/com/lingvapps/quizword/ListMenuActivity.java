@@ -48,18 +48,11 @@ abstract class ListMenuActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
-            startMainMenuActivity();
+            onBackPressed();
             return true;
         default:
             return false;
         }
-    }
-
-    protected void startMainMenuActivity() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        // TODO: fix back behavior
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
     }
 
     protected void restart() {

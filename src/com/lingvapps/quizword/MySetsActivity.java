@@ -84,7 +84,7 @@ public class MySetsActivity extends ListMenuActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startMainMenuActivity();
+                onBackPressed();
                 return true;
             case R.id.menu_sync:
                 executeSyncTask();
