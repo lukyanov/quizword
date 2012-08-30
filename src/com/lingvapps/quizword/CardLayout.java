@@ -17,9 +17,9 @@ import android.widget.TextView;
 
 public class CardLayout extends LinearLayout {
     
-    static final int SIDE_TERM = 0;
-    static final int SIDE_DEFINITION = 1;
-    static final int SIDE_BOTH = 2;
+    static final public int SIDE_TERM = 0;
+    static final public int SIDE_DEFINITION = 1;
+    static final public int SIDE_BOTH = 2;
     
     private int currentSide = SIDE_BOTH;
     
@@ -30,6 +30,7 @@ public class CardLayout extends LinearLayout {
         super(context);
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.card, this);
+        //setRotationY(-90f);
     }
     
     @Override
@@ -58,15 +59,50 @@ public class CardLayout extends LinearLayout {
         textView.setText(definition);
     }
     
-    @TargetApi(12)
-    private void flip(View v) {
-//        View visibleView;
-//        View invisibleView;
+    public void setCurrentSide(int side) {
+        if (currentSide == side) {
+            return;
+        }
+        int definitionVisibility = View.VISIBLE;
+        switch (side) {
+        case SIDE_BOTH:
+            if (currentSide == SIDE_DEFINITION) {
+                swapSides();
+            }
+            definitionVisibility = View.VISIBLE;
+            break;
+        case SIDE_TERM:
+            if (currentSide == SIDE_DEFINITION) {
+                swapSides();
+            }
+            definitionVisibility = View.GONE;
+            break;
+        case SIDE_DEFINITION:
+            swapSides();
+            definitionVisibility = View.GONE;
+            break;
+        }
+        findViewById(R.id.card_definition).setVisibility(definitionVisibility);
+        currentSide = side;
+    }
+    
+    private void swapSides() {
+        TextView termView = ((TextView) findViewById(R.id.card_term));
+        TextView definitionView = ((TextView) findViewById(R.id.card_definition));
+        
+        CharSequence term = termView.getText();
+        termView.setText(definitionView.getText());
+        definitionView.setText(term);
+
         if (currentSide == SIDE_TERM) {
             currentSide = SIDE_DEFINITION;
         } else {
             currentSide = SIDE_TERM;
         }
+    }
+    
+    @TargetApi(12)
+    private void flip(View v) {
         View view = this;
         //float scale = getResources().getDisplayMetrics().density;
         //view.setCameraDistance(1.5f * scale);
@@ -75,19 +111,15 @@ public class CardLayout extends LinearLayout {
         visToInvis.setDuration(300);
         visToInvis.setInterpolator(accelerator);
 
-        TextView textView = (TextView) findViewById(R.id.card_definition);
-        setTerm(textView.getText().toString());
-
         final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(view, "rotationY",
                 -90f, 0f);
-        invisToVis.setDuration(500);
+        invisToVis.setDuration(300);
         invisToVis.setInterpolator(decelerator);
         visToInvis.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator anim) {
-                //visibleList.setVisibility(View.GONE);
+                swapSides();
                 invisToVis.start();
-                //invisibleList.setVisibility(View.VISIBLE);
             }
         });
         visToInvis.start();

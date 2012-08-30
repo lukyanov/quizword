@@ -9,14 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 public class CardFragment extends Fragment {
 
     static final int MODE_BOTH_SIDES = 0;
-    static final int MODE_SINGLE_SIDE = 1;
+    static final int MODE_TERM_SIDE = 1;
+    static final int MODE_DEFINITION_SIDE = 2;
     
+    private int currentMode = MODE_BOTH_SIDES;
+
     private CardSet cardSet = null;
     
     static CardFragment newInstance(Integer set_id, String set_name) {
@@ -43,24 +45,17 @@ public class CardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        if (cardSet == null) {
+            return new View(getActivity());
+        }
         View view = createViewSwitcher(inflater, container, savedInstanceState);
-        //view.setRotationY(-90f);
-        Button button = (Button) findViewById(R.id.button1);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                switchModes();
-            }
-        });
+        view.setBackgroundColor(Color.BLACK);
         return view;
     }
 
     private View createViewSwitcher(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        if (cardSet == null) {
-            return new View(getActivity());
-        }
-        final ViewSwitcher view = new ViewSwitcher(getActivity().getApplicationContext());
-        view.setBackgroundColor(Color.BLACK);
+        ViewSwitcher view = new ViewSwitcher(getActivity().getApplicationContext());
         for (Card card : cardSet) {
             CardLayout layout = new CardLayout(this.getActivity());
             layout.setTerm(card.getTerm());
@@ -69,7 +64,35 @@ public class CardFragment extends Fragment {
         }
 
         view.setOnScreenSwitchListener(onScreenSwitchListener);
+        
         return view;
+    }
+    
+    public void switchModes() {
+        Log.d("quizword", "switchModes");
+        int currentSide = -1;
+        switch (currentMode) {
+        case MODE_BOTH_SIDES:
+            currentMode = MODE_TERM_SIDE;
+            currentSide = CardLayout.SIDE_TERM;
+            break;
+        case MODE_TERM_SIDE:
+            currentMode = MODE_DEFINITION_SIDE;
+            currentSide = CardLayout.SIDE_DEFINITION;
+            break;
+        case MODE_DEFINITION_SIDE:
+            currentMode = MODE_BOTH_SIDES;
+            currentSide = CardLayout.SIDE_BOTH;
+        }
+        FrameLayout frame = (FrameLayout) getView();
+        ViewSwitcher switcher = (ViewSwitcher) frame.getChildAt(0);
+        
+        int count = switcher.getChildCount();
+        CardLayout layout;
+        for (int i = 0; i < count; i++) {
+            layout = (CardLayout) switcher.getChildAt(i);
+            layout.setCurrentSide(currentSide);
+        }
     }
 
     private void readCards(Integer setId, String setName) {
@@ -90,27 +113,6 @@ public class CardFragment extends Fragment {
             .attach(this)
             .commit();
     }
-    
-    
-    private void switchModes() {
-        Log.d("quizword", "switchModes");
-        if (currentMode == MODE_BOTH_SIDES) {
-            makeSingleSide();
-        } else {
-            makeBothSides();
-        }
-    }
-    
-    private void makeSingleSide() {
-        currentMode = MODE_SINGLE_SIDE;
-        findViewById(R.id.card_definition).setVisibility(View.GONE);
-    }
-
-    private void makeBothSides() {
-        currentMode = MODE_BOTH_SIDES;
-        findViewById(R.id.card_definition).setVisibility(View.VISIBLE);
-    }
-
 
     private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
         public void onScreenSwitched(int screen) {
