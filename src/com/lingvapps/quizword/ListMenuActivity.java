@@ -2,10 +2,10 @@ package com.lingvapps.quizword;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,7 +63,11 @@ abstract class ListMenuActivity extends FragmentActivity {
     }
 
     protected void showErrorMessage(int title, int message) {
-        DialogFragment newFragment = AlertDialogFragment.newInstance(title, message);
-        newFragment.show(getSupportFragmentManager(), "dialog");
+        new AlertDialog.Builder(this)
+                //.setIcon(R.drawable.alert_dialog_icon)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 }
