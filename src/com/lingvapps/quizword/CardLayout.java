@@ -117,12 +117,19 @@ public class CardLayout extends LinearLayout {
         //float scale = getResources().getDisplayMetrics().density;
         //view.setCameraDistance(1.5f * scale);
 
-        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(view, "rotationY", 0f, 90f);
+        int directionSign;
+        if (currentSide == SIDE_TERM) {
+            directionSign = 1;
+        } else {
+            directionSign = -1;
+        }
+
+        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(view, "rotationY", 0f, directionSign * 90f);
         visToInvis.setDuration(300);
         visToInvis.setInterpolator(accelerator);
 
         final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(view, "rotationY",
-                -90f, 0f);
+                (-directionSign) * 90f, 0f);
         invisToVis.setDuration(300);
         invisToVis.setInterpolator(decelerator);
         visToInvis.addListener(new AnimatorListenerAdapter() {
@@ -136,7 +143,7 @@ public class CardLayout extends LinearLayout {
     }
 
     public void turn() {
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotation", 0.0f, 3*360.0f);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotation", 0.0f, 2*360.0f);
         anim.setDuration(1000);
         if (onTurnListener != null) {
             anim.addListener(new AnimatorListenerAdapter() {
