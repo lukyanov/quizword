@@ -106,6 +106,14 @@ public class CardFragment extends Fragment {
                 switchModes();
             }
         });
+
+        Button buttonShuffle = (Button) view.findViewById(R.id.shuffle_button);
+        buttonShuffle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                shuffleCards();
+            }
+        });
+
         Button buttonBack = (Button) view.findViewById(R.id.navigation_back);
         buttonBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
