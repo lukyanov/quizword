@@ -87,22 +87,31 @@ public class CardFragment extends Fragment {
         ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
         fillViewSwitcher(switcher, inflater);
         view.setBackgroundColor(Color.BLACK);
-
-        Button button = (Button) view.findViewById(R.id.mode_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                switchModes();
-            }
-        });
         
+        setButtonListeners(view);
         updateCounterText(view);
-
+        
         return view;
     }
 
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("currentMode", currentMode);
         outState.putInt("currentCard", currentCard);
+    }
+    
+    private void setButtonListeners(View view) {
+        Button buttonMode = (Button) view.findViewById(R.id.mode_button);
+        buttonMode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switchModes();
+            }
+        });
+        Button buttonBack = (Button) view.findViewById(R.id.navigation_back);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     private View fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
