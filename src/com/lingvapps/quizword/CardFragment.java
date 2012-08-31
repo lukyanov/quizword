@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CardFragment extends Fragment {
@@ -52,7 +54,7 @@ public class CardFragment extends Fragment {
             readCards(getArguments().getInt("set_id"), getArguments()
                     .getString("set_name"));
         }
-
+        
         shaker = new ShakeListener(getActivity());
         shaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
             public void onShake() {
@@ -80,8 +82,21 @@ public class CardFragment extends Fragment {
         if (cardSet == null) {
             return new View(getActivity());
         }
-        View view = createViewSwitcher(inflater, container, savedInstanceState);
+        
+        View view = inflater.inflate(R.layout.card_fragment, container, false);
+        ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
+        fillViewSwitcher(switcher, inflater);
         view.setBackgroundColor(Color.BLACK);
+
+        Button button = (Button) view.findViewById(R.id.mode_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                switchModes();
+            }
+        });
+        
+        updateCounterText(view);
+
         return view;
     }
 
@@ -90,10 +105,7 @@ public class CardFragment extends Fragment {
         outState.putInt("currentCard", currentCard);
     }
 
-    private View createViewSwitcher(LayoutInflater inflater,
-            ViewGroup container, Bundle savedInstanceState) {
-        ViewSwitcher view = new ViewSwitcher(getActivity()
-                .getApplicationContext());
+    private View fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
         for (Card card : cardSet) {
             CardLayout layout = new CardLayout(this.getActivity());
             layout.setTerm(card.getTerm());
@@ -137,7 +149,7 @@ public class CardFragment extends Fragment {
         layout.turn();
     }
 
-    public void switchModes() {
+    private void switchModes() {
         Log.d("quizword", "switchModes");
         switch (currentMode) {
         case MODE_BOTH_SIDES:
@@ -160,9 +172,13 @@ public class CardFragment extends Fragment {
         }
     }
     
-    private ViewSwitcher getSwitcher() {
+    private View getRootView() {
         FrameLayout frame = (FrameLayout) getView();
-        return (ViewSwitcher) frame.getChildAt(0);
+        return frame.getChildAt(0);
+    }
+    
+    private ViewSwitcher getSwitcher() {
+        return (ViewSwitcher) getRootView().findViewById(R.id.view_switcher);
     }
 
     private void readCards(Integer setId, String setName) {
@@ -180,13 +196,22 @@ public class CardFragment extends Fragment {
     }
 
     private void refresh() {
+        currentCard = 0;
         getFragmentManager().beginTransaction().detach(this).attach(this)
                 .commit();
+    }
+    
+    private void updateCounterText(View rootView) {
+        TextView text = (TextView) rootView.findViewById(R.id.counter_text);
+        String i = Integer.valueOf(currentCard + 1).toString();
+        String n = Integer.valueOf(cardSet.size()).toString();
+        text.setText(i + "/" + n);
     }
 
     private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
         public void onScreenSwitched(int screen) {
             currentCard = screen;
+            updateCounterText(getRootView());
         }
 
     };

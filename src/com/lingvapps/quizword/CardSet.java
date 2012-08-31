@@ -56,6 +56,10 @@ public class CardSet implements Iterable<Card> {
         this.name = name;
     }
     
+    public int size() {
+        return cards.size();
+    }
+    
     public String toString() {
         return name + " (" + getCardsCount().toString() + ")";
     }

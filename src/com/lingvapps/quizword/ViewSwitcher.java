@@ -1,6 +1,7 @@
 package com.lingvapps.quizword;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import de.marcreichelt.android.RealViewSwitcher;
 
@@ -8,6 +9,10 @@ public class ViewSwitcher extends RealViewSwitcher {
 
     public ViewSwitcher(Context context) {
         super(context);
+    }
+
+    public ViewSwitcher(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     @Override

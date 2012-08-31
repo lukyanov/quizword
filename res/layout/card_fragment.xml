@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.lingvapps.quizword.ViewSwitcher
+        android:id="@+id/view_switcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </com.lingvapps.quizword.ViewSwitcher>
+
+    <Button
+        android:id="@+id/mode_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.3"
+        android:background="@drawable/refresh" />
+
+    <TextView
+        android:id="@+id/counter_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:alpha="0.3"
+        android:text="1/25"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
