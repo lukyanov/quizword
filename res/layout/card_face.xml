@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top|bottom|center"
-    android:background="@drawable/lined"
+    android:background="@drawable/lined_face"
     android:gravity="top|bottom"
     android:orientation="vertical" >
 
@@ -11,31 +11,26 @@
         android:id="@+id/card_term"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:scrollHorizontally="false"
-        android:layout_weight=".60"
         android:layout_gravity="center"
+        android:layout_weight=".60"
         android:gravity="center"
-        android:longClickable="false"
         android:padding="5dp"
         android:text="Card Term"
         android:textColor="@android:color/black"
-        android:textSize="45sp"
-        android:duplicateParentState="true" />
+        android:textSize="45sp" />
 
     <TextView
         android:id="@+id/card_definition"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:scrollHorizontally="false"
         android:layout_weight=".40"
         android:gravity="center_horizontal"
-        android:paddingTop="25dp"
+        android:paddingBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:paddingBottom="5dp"
+        android:paddingTop="25dp"
         android:text="Card Definition"
         android:textColor="@android:color/black"
-        android:textSize="35sp"
-        android:duplicateParentState="true" />
+        android:textSize="35sp" />
 
 </LinearLayout>

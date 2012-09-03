@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="top|bottom|center"
+    android:background="@drawable/lined_back"
+    android:gravity="top|bottom"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/card_definition_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Card Definition"
+        android:textColor="@android:color/black"
+        android:textSize="45sp" />
+
+</LinearLayout>

@@ -18,11 +18,7 @@ import android.widget.Toast;
 
 public class CardFragment extends Fragment {
 
-    static final int MODE_BOTH_SIDES = 0;
-    static final int MODE_TERM_SIDE = 1;
-    static final int MODE_DEFINITION_SIDE = 2;
-
-    private int currentMode = MODE_BOTH_SIDES;
+    private int currentMode = CardLayout.MODE_SINGLE_SIDE;
     private int currentCard = 0;
 
     private CardSet cardSet = null;
@@ -127,7 +123,7 @@ public class CardFragment extends Fragment {
             CardLayout layout = new CardLayout(this.getActivity());
             layout.setTerm(card.getTerm());
             layout.setDefinition(card.getDefinition());
-            layout.setCurrentSide(getInitialCardSide());
+            layout.setCurrentMode(currentMode);
             view.addView(layout);
         }
         
@@ -135,18 +131,6 @@ public class CardFragment extends Fragment {
         view.setOnScreenSwitchListener(onScreenSwitchListener);
 
         return view;
-    }
-    
-    private int getInitialCardSide() {
-        switch (currentMode) {
-        case MODE_TERM_SIDE:
-            return CardLayout.SIDE_TERM;
-        case MODE_DEFINITION_SIDE:
-            return CardLayout.SIDE_DEFINITION;
-        case MODE_BOTH_SIDES:
-            return CardLayout.SIDE_BOTH;
-        }
-        return -1;
     }
     
     @TargetApi(11)
@@ -169,14 +153,14 @@ public class CardFragment extends Fragment {
     private void switchModes() {
         Log.d("quizword", "switchModes");
         switch (currentMode) {
-        case MODE_BOTH_SIDES:
-            currentMode = MODE_TERM_SIDE;
+        case CardLayout.MODE_SINGLE_SIDE:
+            currentMode = CardLayout.MODE_TERM_FIRST;
             break;
-        case MODE_TERM_SIDE:
-            currentMode = MODE_DEFINITION_SIDE;
+        case CardLayout.MODE_TERM_FIRST:
+            currentMode = CardLayout.MODE_DEFINITION_FIRST;
             break;
-        case MODE_DEFINITION_SIDE:
-            currentMode = MODE_BOTH_SIDES;
+        case CardLayout.MODE_DEFINITION_FIRST:
+            currentMode = CardLayout.MODE_SINGLE_SIDE;
             break;
         }
 
@@ -185,7 +169,7 @@ public class CardFragment extends Fragment {
         CardLayout layout;
         for (int i = 0; i < count; i++) {
             layout = (CardLayout) switcher.getChildAt(i);
-            layout.setCurrentSide(getInitialCardSide());
+            layout.setCurrentMode(currentMode);
         }
     }
     

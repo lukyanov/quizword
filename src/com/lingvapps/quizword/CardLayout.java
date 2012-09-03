@@ -12,31 +12,51 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class CardLayout extends LinearLayout {
+public class CardLayout extends FrameLayout {
 
-    static final public int SIDE_TERM = 0;
-    static final public int SIDE_DEFINITION = 1;
-    static final public int SIDE_BOTH = 2;
+    public static final int MODE_SINGLE_SIDE = 0;
+    public static final int MODE_TERM_FIRST = 1;
+    public static final int MODE_DEFINITION_FIRST = 2;
 
-    private int currentSide = SIDE_BOTH;
+    private static final int SIDE_TERM = 3;
+    private static final int SIDE_DEFINITION = 4;
+    
+    private View faceSide = null;
+    private View backSide = null;
+
+    private int currentMode = MODE_SINGLE_SIDE;
+    private int currentSide = SIDE_TERM;
 
     private Interpolator accelerator = new AccelerateInterpolator();
     private Interpolator decelerator = new DecelerateInterpolator();
 
     private OnTurnListener onTurnListener = null;
-    
+
     public interface OnTurnListener {
         public void onStop();
     }
 
+    @TargetApi(11)
     public CardLayout(Context context) {
         super(context);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        layoutInflater.inflate(R.layout.card, this);
-        //setRotationY(-90f);
+        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        faceSide = layoutInflater.inflate(R.layout.card_face, null);
+        backSide = layoutInflater.inflate(R.layout.card_back, null);
+        initSides();
+        addView(faceSide);
+        addView(backSide);
+    }
+    
+    @TargetApi(11)
+    private void initSides() {
+        faceSide.setVisibility(View.VISIBLE);
+        faceSide.setRotationY(0f);
+        backSide.setVisibility(View.GONE);
+        backSide.setRotationY(-90f);
+        currentSide = SIDE_TERM;
     }
 
     @Override
@@ -46,7 +66,7 @@ public class CardLayout extends LinearLayout {
         case MotionEvent.ACTION_DOWN:
             return true;
         case MotionEvent.ACTION_UP:
-            if (currentSide != SIDE_BOTH) {
+            if (currentMode != MODE_SINGLE_SIDE) {
                 flip();
             }
             return true;
@@ -56,40 +76,46 @@ public class CardLayout extends LinearLayout {
     }
 
     public void setTerm(String term) {
-        TextView textView = (TextView) findViewById(R.id.card_term);
-        textView.setText(term);
+        ((TextView) faceSide.findViewById(R.id.card_term))
+            .setText(term);
     }
 
     public void setDefinition(String definition) {
-        TextView textView = (TextView) findViewById(R.id.card_definition);
-        textView.setText(definition);
+        ((TextView) faceSide.findViewById(R.id.card_definition))
+            .setText(definition);
+        ((TextView) backSide.findViewById(R.id.card_definition_back))
+            .setText(definition);
     }
 
-    public void setCurrentSide(int side) {
-        if (currentSide == side) {
+    public void setCurrentMode(int mode) {
+        if (currentMode == mode) {
             return;
         }
         int definitionVisibility = View.VISIBLE;
-        switch (side) {
-        case SIDE_BOTH:
-            if (currentSide == SIDE_DEFINITION) {
+        switch (mode) {
+        case MODE_SINGLE_SIDE:
+            if (currentMode == MODE_DEFINITION_FIRST) {
                 swapSides();
             }
             definitionVisibility = View.VISIBLE;
             break;
-        case SIDE_TERM:
-            if (currentSide == SIDE_DEFINITION) {
+        case MODE_TERM_FIRST:
+            if (currentMode == MODE_DEFINITION_FIRST) {
                 swapSides();
             }
             definitionVisibility = View.GONE;
             break;
-        case SIDE_DEFINITION:
+        case MODE_DEFINITION_FIRST:
             swapSides();
             definitionVisibility = View.GONE;
             break;
         }
-        findViewById(R.id.card_definition).setVisibility(definitionVisibility);
-        currentSide = side;
+        faceSide.findViewById(R.id.card_definition).setVisibility(definitionVisibility);
+        currentMode = mode;
+        
+        if (currentSide == SIDE_DEFINITION) {
+            initSides();
+        }
     }
 
     public void setOnTurnListener(OnTurnListener listener) {
@@ -97,51 +123,56 @@ public class CardLayout extends LinearLayout {
     }
 
     private void swapSides() {
-        TextView termView = ((TextView) findViewById(R.id.card_term));
-        TextView definitionView = ((TextView) findViewById(R.id.card_definition));
+        TextView termView = (TextView) faceSide.findViewById(R.id.card_term);
+        TextView defView = (TextView) faceSide.findViewById(R.id.card_definition);
+        TextView defViewBack = (TextView) backSide.findViewById(R.id.card_definition_back);
 
         CharSequence term = termView.getText();
-        termView.setText(definitionView.getText());
-        definitionView.setText(term);
-
-        if (currentSide == SIDE_TERM) {
-            currentSide = SIDE_DEFINITION;
-        } else {
-            currentSide = SIDE_TERM;
-        }
+        termView.setText(defView.getText());
+        defView.setText(term);
+        defViewBack.setText(term);
     }
 
-    @TargetApi(12)
+    @TargetApi(11)
     private void flip() {
-        View view = this;
+        final View viewVisible;
+        final View viewInvisible;
+        final int directionSign;
+
+        if (currentSide == SIDE_TERM) {
+            viewVisible = faceSide;
+            viewInvisible = backSide;
+            currentSide = SIDE_DEFINITION;
+            directionSign = 1;
+        } else {
+            viewVisible = backSide;
+            viewInvisible = faceSide;
+            currentSide = SIDE_TERM;
+            directionSign = -   1;
+        }
+
         //float scale = getResources().getDisplayMetrics().density;
         //view.setCameraDistance(1.5f * scale);
 
-        int directionSign;
-        if (currentSide == SIDE_TERM) {
-            directionSign = 1;
-        } else {
-            directionSign = -1;
-        }
-
-        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(view, "rotationY", 0f, directionSign * 90f);
+        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(viewVisible, "rotationY", 0f, directionSign * 90f);
         visToInvis.setDuration(300);
         visToInvis.setInterpolator(accelerator);
-
-        final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(view, "rotationY",
+        final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(viewInvisible, "rotationY",
                 (-directionSign) * 90f, 0f);
         invisToVis.setDuration(300);
         invisToVis.setInterpolator(decelerator);
         visToInvis.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator anim) {
-                swapSides();
+                viewVisible.setVisibility(View.GONE);
                 invisToVis.start();
+                viewInvisible.setVisibility(View.VISIBLE);
             }
         });
         visToInvis.start();
     }
 
+    @TargetApi(11)
     public void turn() {
         ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotation", 0.0f, 2*360.0f);
         anim.setDuration(1000);
@@ -155,5 +186,4 @@ public class CardLayout extends LinearLayout {
         }
         anim.start();
     }
-
 }
