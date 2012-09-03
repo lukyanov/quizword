@@ -8,6 +8,8 @@
     <string name="title_activity_card">Card</string>
     <string name="title_activity_account_settings">Account Settings</string>
     <string name="title_activity_my_sets">My Sets</string>
+    <string name="title_activity_my_classes_sets">My Classes Sets</string>
+    <string name="title_activity_favorite_sets">Favorite Sets</string>
     
     <string name="auth_error_title">Authorization Error</string>
     <string name="auth_error_message">Error occured when authorizing. Try again</string>
@@ -23,8 +25,9 @@
     <string name="ok">OK</string>
     
     <string-array name="main_menu">
-        <item>View My Sets</item>
-        <item>Find Public Sets</item>
+        <item>My Sets</item>
+        <item>My Classes Sets</item>
+        <item>Favorite Sets</item>
         <item>Account Settings</item>
     </string-array>
      

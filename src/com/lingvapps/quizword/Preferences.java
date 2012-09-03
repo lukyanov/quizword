@@ -78,4 +78,23 @@ public class Preferences {
             return value;
         }
     }
+    
+    public void setDataSyncedFlag() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit()
+            .putBoolean("synced", true)
+            .commit();
+    }
+    
+    public Boolean isDataSynced() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean("synced", false);
+    }
+    
+    public void clearDataSyncedFlag() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit()
+            .remove("synced")
+            .commit();
+    }
 }

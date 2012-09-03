@@ -145,7 +145,6 @@ public class CardFragment extends Fragment {
                 cardSet.shuffle();
                 currentCard = 0;
                 refresh();
-                Toast.makeText(getActivity(), R.string.shuffled_message, Toast.LENGTH_LONG).show();
             }
         });
         layout.turn();

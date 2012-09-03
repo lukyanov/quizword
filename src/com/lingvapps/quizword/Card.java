@@ -1,12 +1,18 @@
 package com.lingvapps.quizword;
 
 public class Card {
+    private Integer id;
     private String term;
     private String definition;
     
-    public Card(String term, String definition) {
+    public Card(Integer id, String term, String definition) {
+        this.id = id;
         setTerm(term);
         setDefinition(definition);
+    }
+    
+    public Integer getId() {
+        return id;
     }
     
     public String getTerm() {

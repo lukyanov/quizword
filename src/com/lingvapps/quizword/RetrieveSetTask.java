@@ -17,13 +17,14 @@ class RetrieveSetTask extends BackgroundTask<String, CardSet> {
         try {
             LocalStorageHelper storageHelper = new LocalStorageHelper(context);
             SQLiteDatabase db = storageHelper.getWritableDatabase();
-            String[] fields = {"term", "definition"};
+            String[] fields = {"id", "term", "definition"};
             String[] whereArgs = {setId};
             Cursor cursor = db.query("cards", fields, "set_id = ?", whereArgs, null, null, null);
             CardSet set = new CardSet(Integer.parseInt(setId), setName);
             while (cursor.moveToNext()) {
-                set.addCard(new Card(cursor.getString(0), cursor.getString(1)));
+                set.addCard(new Card(cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
             }
+            db.close();
             return set;
         } catch (Exception e) {
             e.printStackTrace();

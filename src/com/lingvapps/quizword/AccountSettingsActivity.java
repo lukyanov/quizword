@@ -132,6 +132,7 @@ public class AccountSettingsActivity extends ListMenuActivity {
     protected void logout() {
         Preferences prefs = Preferences.getInstance(this);
         prefs.clearUserData();
+        prefs.clearDataSyncedFlag();
         LocalStorageHelper storageHelper = new LocalStorageHelper(this.getApplicationContext());
         storageHelper.clear_db();
         drawMenuList();
