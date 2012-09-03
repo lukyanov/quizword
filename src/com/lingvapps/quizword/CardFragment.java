@@ -143,6 +143,7 @@ public class CardFragment extends Fragment {
         layout.setOnTurnListener(new CardLayout.OnTurnListener() {
             public void onStop() {
                 cardSet.shuffle();
+                currentCard = 0;
                 refresh();
                 Toast.makeText(getActivity(), R.string.shuffled_message, Toast.LENGTH_LONG).show();
             }
@@ -197,7 +198,6 @@ public class CardFragment extends Fragment {
     }
 
     private void refresh() {
-        currentCard = 0;
         getFragmentManager().beginTransaction().detach(this).attach(this)
                 .commit();
     }
