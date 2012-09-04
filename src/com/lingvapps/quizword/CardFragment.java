@@ -1,6 +1,9 @@
 package com.lingvapps.quizword;
 
 import de.marcreichelt.android.RealViewSwitcher;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
@@ -8,13 +11,14 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CardFragment extends Fragment {
 
@@ -40,17 +44,17 @@ public class CardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        
+
         if (savedInstanceState != null) {
             currentMode = savedInstanceState.getInt("currentMode");
             currentCard = savedInstanceState.getInt("currentCard");
         }
-        
+
         if (getArguments() != null) {
             readCards(getArguments().getInt("set_id"), getArguments()
                     .getString("set_name"));
         }
-        
+
         shaker = new ShakeListener(getActivity());
         shaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
             public void onShake() {
@@ -78,15 +82,15 @@ public class CardFragment extends Fragment {
         if (cardSet == null) {
             return new View(getActivity());
         }
-        
+
         View view = inflater.inflate(R.layout.card_fragment, container, false);
         ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
         fillViewSwitcher(switcher, inflater);
         view.setBackgroundColor(Color.BLACK);
-        
+
         setButtonListeners(view);
         updateCounterText(view);
-        
+
         return view;
     }
 
@@ -94,7 +98,7 @@ public class CardFragment extends Fragment {
         outState.putInt("currentMode", currentMode);
         outState.putInt("currentCard", currentCard);
     }
-    
+
     private void setButtonListeners(View view) {
         Button buttonMode = (Button) view.findViewById(R.id.mode_button);
         buttonMode.setOnClickListener(new View.OnClickListener() {
@@ -118,36 +122,77 @@ public class CardFragment extends Fragment {
         });
     }
 
-    private View fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
+    private void fillViewSwitcher(ViewSwitcher view) {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        fillViewSwitcher(view, inflater);
+    }
+    
+    private void fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
+        view.removeAllViews();
         for (Card card : cardSet) {
             CardLayout layout = new CardLayout(this.getActivity());
-            layout.setTerm(card.getTerm());
-            layout.setDefinition(card.getDefinition());
+            layout.setFace(card.getTerm());
+            layout.setBack(card.getDefinition());
             layout.setCurrentMode(currentMode);
             view.addView(layout);
         }
-        
+
         view.setCurrentScreen(currentCard);
         view.setOnScreenSwitchListener(onScreenSwitchListener);
-
-        return view;
     }
-    
-    @TargetApi(11)
+
     public void shuffleCards() {
         Vibrator vibe = (Vibrator) getActivity().getSystemService(
                 Context.VIBRATOR_SERVICE);
         vibe.vibrate(100);
-        ViewSwitcher switcher = getSwitcher();
-        CardLayout layout = (CardLayout) switcher.getChildAt(switcher.getCurrentScreen());
-        layout.setOnTurnListener(new CardLayout.OnTurnListener() {
-            public void onStop() {
-                cardSet.shuffle();
-                currentCard = 0;
-                refresh();
+        cardSet.shuffle();
+        turnEffect();
+    }
+
+    @TargetApi(11)
+    public void turnEffect() {
+        final CardLayout view = (CardLayout) getSwitcher().getChildAt(currentCard);
+
+        ObjectAnimator animFirst = ObjectAnimator.ofFloat(view, "rotation", 0.0f, 540.0f);
+        animFirst.setInterpolator(new AccelerateInterpolator());
+        animFirst.setDuration(500);
+
+        final ObjectAnimator animSecond = ObjectAnimator.ofFloat(view, "rotation", 540.0f, 3*360.0f);
+        animSecond.setDuration(500);
+        animSecond.setInterpolator(new DecelerateInterpolator());
+        view.setRotation(540.0f);
+        
+
+        animSecond.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator anim) {
+                updateCounterText(getRootView());
+                fillViewSwitcher(getSwitcher());
             }
         });
-        layout.turn();
+        
+        final Card card = cardSet.getCard(0);
+
+        animFirst.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator anim) {
+                animSecond.start();
+                currentCard = 0;
+                switch (currentMode) {
+                case CardLayout.MODE_DEFINITION_FIRST:
+                    view.setFace(card.getDefinition());
+                    break;
+                case CardLayout.MODE_TERM_FIRST:
+                    view.setFace(card.getTerm());
+                    break;
+                case CardLayout.MODE_SINGLE_SIDE:
+                    view.setFace(card.getTerm());
+                    view.setBack(card.getDefinition());
+                    break;
+                }
+            }
+        });
+        animFirst.start();
     }
 
     private void switchModes() {
@@ -172,14 +217,14 @@ public class CardFragment extends Fragment {
             layout.setCurrentMode(currentMode);
         }
     }
-    
-    private View getRootView() {
+
+    private ViewGroup getRootView() {
         FrameLayout frame = (FrameLayout) getView();
-        return frame.getChildAt(0);
+        return (ViewGroup) frame.getChildAt(0);
     }
-    
+
     private ViewSwitcher getSwitcher() {
-        return (ViewSwitcher) getRootView().findViewById(R.id.view_switcher);
+        return (ViewSwitcher) getRootView().getChildAt(0);
     }
 
     private void readCards(Integer setId, String setName) {
@@ -198,9 +243,9 @@ public class CardFragment extends Fragment {
 
     private void refresh() {
         getFragmentManager().beginTransaction().detach(this).attach(this)
-                .commit();
+        .commit();
     }
-    
+
     private void updateCounterText(View rootView) {
         TextView text = (TextView) rootView.findViewById(R.id.counter_text);
         String i = Integer.valueOf(currentCard + 1).toString();

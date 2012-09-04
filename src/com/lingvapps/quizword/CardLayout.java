@@ -33,8 +33,6 @@ public class CardLayout extends FrameLayout {
     private Interpolator accelerator = new AccelerateInterpolator();
     private Interpolator decelerator = new DecelerateInterpolator();
 
-    private OnTurnListener onTurnListener = null;
-
     public interface OnTurnListener {
         public void onStop();
     }
@@ -75,16 +73,16 @@ public class CardLayout extends FrameLayout {
         }
     }
 
-    public void setTerm(String term) {
+    public void setFace(String text) {
         ((TextView) faceSide.findViewById(R.id.card_term))
-            .setText(term);
+            .setText(text);
     }
 
-    public void setDefinition(String definition) {
+    public void setBack(String text) {
         ((TextView) faceSide.findViewById(R.id.card_definition))
-            .setText(definition);
+            .setText(text);
         ((TextView) backSide.findViewById(R.id.card_definition_back))
-            .setText(definition);
+            .setText(text);
     }
 
     public void setCurrentMode(int mode) {
@@ -116,10 +114,6 @@ public class CardLayout extends FrameLayout {
         if (currentSide == SIDE_DEFINITION) {
             initSides();
         }
-    }
-
-    public void setOnTurnListener(OnTurnListener listener) {
-        onTurnListener = listener;
     }
 
     private void swapSides() {
@@ -170,20 +164,5 @@ public class CardLayout extends FrameLayout {
             }
         });
         visToInvis.start();
-    }
-
-    @TargetApi(11)
-    public void turn() {
-        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotation", 0.0f, 2*360.0f);
-        anim.setDuration(1000);
-        if (onTurnListener != null) {
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator anim) {
-                    onTurnListener.onStop();
-                }
-            });
-        }
-        anim.start();
     }
 }

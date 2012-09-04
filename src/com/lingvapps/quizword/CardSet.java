@@ -39,6 +39,10 @@ public class CardSet implements Iterable<Card> {
         this.cards.remove(card);
         this.termCount = this.cards.size();
     }
+
+    public Card getCard(int index) {
+        return this.cards.get(index);
+    }
     
     public Integer getId() {
         return id;
