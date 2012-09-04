@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CardFragment extends Fragment {
 
@@ -75,7 +77,6 @@ public class CardFragment extends Fragment {
         super.onPause();
     }
 
-    @TargetApi(11)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -146,7 +147,14 @@ public class CardFragment extends Fragment {
                 Context.VIBRATOR_SERVICE);
         vibe.vibrate(100);
         cardSet.shuffle();
-        turnEffect();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            turnEffect();
+        } else {
+            currentCard = 0;
+            fillViewSwitcher(getSwitcher());
+            updateCounterText(getRootView());
+            Toast.makeText(getActivity(), R.string.shuffled_message, Toast.LENGTH_LONG).show();
+        }
     }
 
     @TargetApi(11)
@@ -166,8 +174,8 @@ public class CardFragment extends Fragment {
         animSecond.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator anim) {
-                updateCounterText(getRootView());
                 fillViewSwitcher(getSwitcher());
+                updateCounterText(getRootView());
             }
         });
         

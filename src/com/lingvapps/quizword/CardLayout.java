@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,7 +24,7 @@ public class CardLayout extends FrameLayout {
 
     private static final int SIDE_TERM = 3;
     private static final int SIDE_DEFINITION = 4;
-    
+
     private View faceSide = null;
     private View backSide = null;
 
@@ -37,7 +38,6 @@ public class CardLayout extends FrameLayout {
         public void onStop();
     }
 
-    @TargetApi(11)
     public CardLayout(Context context) {
         super(context);
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,13 +47,15 @@ public class CardLayout extends FrameLayout {
         addView(faceSide);
         addView(backSide);
     }
-    
+
     @TargetApi(11)
     private void initSides() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            faceSide.setRotationY(0f);
+            backSide.setRotationY(-90f);
+        }
         faceSide.setVisibility(View.VISIBLE);
-        faceSide.setRotationY(0f);
         backSide.setVisibility(View.GONE);
-        backSide.setRotationY(-90f);
         currentSide = SIDE_TERM;
     }
 
@@ -75,14 +77,14 @@ public class CardLayout extends FrameLayout {
 
     public void setFace(String text) {
         ((TextView) faceSide.findViewById(R.id.card_term))
-            .setText(text);
+        .setText(text);
     }
 
     public void setBack(String text) {
         ((TextView) faceSide.findViewById(R.id.card_definition))
-            .setText(text);
+        .setText(text);
         ((TextView) backSide.findViewById(R.id.card_definition_back))
-            .setText(text);
+        .setText(text);
     }
 
     public void setCurrentMode(int mode) {
@@ -110,7 +112,7 @@ public class CardLayout extends FrameLayout {
         }
         faceSide.findViewById(R.id.card_definition).setVisibility(definitionVisibility);
         currentMode = mode;
-        
+
         if (currentSide == SIDE_DEFINITION) {
             initSides();
         }
@@ -148,21 +150,27 @@ public class CardLayout extends FrameLayout {
         //float scale = getResources().getDisplayMetrics().density;
         //view.setCameraDistance(1.5f * scale);
 
-        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(viewVisible, "rotationY", 0f, directionSign * 90f);
-        visToInvis.setDuration(300);
-        visToInvis.setInterpolator(accelerator);
-        final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(viewInvisible, "rotationY",
-                (-directionSign) * 90f, 0f);
-        invisToVis.setDuration(300);
-        invisToVis.setInterpolator(decelerator);
-        visToInvis.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator anim) {
-                viewVisible.setVisibility(View.GONE);
-                invisToVis.start();
-                viewInvisible.setVisibility(View.VISIBLE);
-            }
-        });
-        visToInvis.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+
+            ObjectAnimator visToInvis = ObjectAnimator.ofFloat(viewVisible, "rotationY", 0f, directionSign * 90f);
+            visToInvis.setDuration(300);
+            visToInvis.setInterpolator(accelerator);
+            final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(viewInvisible, "rotationY",
+                    (-directionSign) * 90f, 0f);
+            invisToVis.setDuration(300);
+            invisToVis.setInterpolator(decelerator);
+            visToInvis.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator anim) {
+                    viewVisible.setVisibility(View.GONE);
+                    invisToVis.start();
+                    viewInvisible.setVisibility(View.VISIBLE);
+                }
+            });
+            visToInvis.start();
+        } else {
+            viewVisible.setVisibility(View.GONE);
+            viewInvisible.setVisibility(View.VISIBLE);
+        }
     }
 }
