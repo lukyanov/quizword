@@ -79,16 +79,18 @@ public class CardLayout extends FrameLayout {
     }
 
     public void setFace(String text) {
-        AutoResizeTextView card = (AutoResizeTextView) faceSide.findViewById(R.id.card_term);
-        card.setText(text);
-        card.resizeText();
+        AutoResizeTextView view = (AutoResizeTextView) faceSide.findViewById(R.id.card_term);
+        view.setText(text);
+        view.resizeText();
     }
 
     public void setBack(String text) {
-        ((TextView) faceSide.findViewById(R.id.card_definition))
-            .setText(text);
-        ((TextView) backSide.findViewById(R.id.card_definition_back))
-            .setText(text);
+        AutoResizeTextView view = (AutoResizeTextView) faceSide.findViewById(R.id.card_definition);
+        view.setText(text);
+        view.resizeText();
+        view = (AutoResizeTextView) backSide.findViewById(R.id.card_definition_back);
+        view.setText(text);
+        view.resizeText();
     }
 
     public void setCurrentMode(int mode) {
