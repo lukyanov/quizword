@@ -226,7 +226,8 @@ public class AutoResizeTextView extends TextView {
         TextPaint textPaint = getPaint();
 
         // Store the current text size
-        float oldTextSize = textPaint.getTextSize();
+//        float oldTextSize = textPaint.getTextSize();
+        float oldTextSize = getTextSize();
         // If there is a max text size set, use the lesser of that and the default text size
         float targetTextSize = mMaxTextSize > 0 ? Math.min(mTextSize, mMaxTextSize) : mTextSize;
 
@@ -270,7 +271,7 @@ public class AutoResizeTextView extends TextView {
 
         // Some devices try to auto adjust line spacing, so force default line spacing
         // and invalidate the layout as a side effect
-        textPaint.setTextSize(targetTextSize);
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, targetTextSize);
         setLineSpacing(mSpacingAdd, mSpacingMult);
 
         // Notify the listener if registered
@@ -285,7 +286,7 @@ public class AutoResizeTextView extends TextView {
     // Set the text size of the text paint object and use a static layout to render text off screen before measuring
     private int getTextHeight(CharSequence source, TextPaint paint, int width, float textSize) {
         // Update the text paint object
-        paint.setTextSize(textSize);
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         // Measure using a static layout
         StaticLayout layout = new StaticLayout(source, paint, width, Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, true);
         return layout.getHeight();

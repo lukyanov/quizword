@@ -132,8 +132,16 @@ public class CardFragment extends Fragment {
         view.removeAllViews();
         for (Card card : cardSet) {
             CardLayout layout = new CardLayout(this.getActivity());
-            layout.setFace(card.getTerm());
-            layout.setBack(card.getDefinition());
+            switch (currentMode) {
+            case CardLayout.MODE_DEFINITION_FIRST:
+                layout.setFace(card.getDefinition());
+                layout.setBack(card.getTerm());
+                break;
+            default:
+                layout.setFace(card.getTerm());
+                layout.setBack(card.getDefinition());
+                break;
+            }
             layout.setCurrentMode(currentMode);
             view.addView(layout);
         }
@@ -187,11 +195,11 @@ public class CardFragment extends Fragment {
                 animSecond.start();
                 currentCard = 0;
                 switch (currentMode) {
-                case CardLayout.MODE_DEFINITION_FIRST:
-                    view.setFace(card.getDefinition());
-                    break;
                 case CardLayout.MODE_TERM_FIRST:
                     view.setFace(card.getTerm());
+                    break;
+                case CardLayout.MODE_DEFINITION_FIRST:
+                    view.setFace(card.getDefinition());
                     break;
                 case CardLayout.MODE_SINGLE_SIDE:
                     view.setFace(card.getTerm());
@@ -217,13 +225,7 @@ public class CardFragment extends Fragment {
             break;
         }
 
-        ViewSwitcher switcher = getSwitcher();
-        int count = switcher.getChildCount();
-        CardLayout layout;
-        for (int i = 0; i < count; i++) {
-            layout = (CardLayout) switcher.getChildAt(i);
-            layout.setCurrentMode(currentMode);
-        }
+        fillViewSwitcher(getSwitcher());
     }
 
     private ViewGroup getRootView() {

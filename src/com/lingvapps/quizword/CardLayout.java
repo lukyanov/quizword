@@ -1,5 +1,7 @@
 package com.lingvapps.quizword;
 
+import com.mediaportal.ampdroid.controls.AutoResizeTextView;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -7,6 +9,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,15 +79,16 @@ public class CardLayout extends FrameLayout {
     }
 
     public void setFace(String text) {
-        ((TextView) faceSide.findViewById(R.id.card_term))
-        .setText(text);
+        AutoResizeTextView card = (AutoResizeTextView) faceSide.findViewById(R.id.card_term);
+        card.setText(text);
+        card.resizeText();
     }
 
     public void setBack(String text) {
         ((TextView) faceSide.findViewById(R.id.card_definition))
-        .setText(text);
+            .setText(text);
         ((TextView) backSide.findViewById(R.id.card_definition_back))
-        .setText(text);
+            .setText(text);
     }
 
     public void setCurrentMode(int mode) {
@@ -94,39 +98,14 @@ public class CardLayout extends FrameLayout {
         int definitionVisibility = View.VISIBLE;
         switch (mode) {
         case MODE_SINGLE_SIDE:
-            if (currentMode == MODE_DEFINITION_FIRST) {
-                swapSides();
-            }
             definitionVisibility = View.VISIBLE;
             break;
-        case MODE_TERM_FIRST:
-            if (currentMode == MODE_DEFINITION_FIRST) {
-                swapSides();
-            }
-            definitionVisibility = View.GONE;
-            break;
-        case MODE_DEFINITION_FIRST:
-            swapSides();
+        default:
             definitionVisibility = View.GONE;
             break;
         }
         faceSide.findViewById(R.id.card_definition).setVisibility(definitionVisibility);
         currentMode = mode;
-
-        if (currentSide == SIDE_DEFINITION) {
-            initSides();
-        }
-    }
-
-    private void swapSides() {
-        TextView termView = (TextView) faceSide.findViewById(R.id.card_term);
-        TextView defView = (TextView) faceSide.findViewById(R.id.card_definition);
-        TextView defViewBack = (TextView) backSide.findViewById(R.id.card_definition_back);
-
-        CharSequence term = termView.getText();
-        termView.setText(defView.getText());
-        defView.setText(term);
-        defViewBack.setText(term);
     }
 
     @TargetApi(11)
