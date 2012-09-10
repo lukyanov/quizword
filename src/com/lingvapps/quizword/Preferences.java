@@ -12,6 +12,11 @@ import android.preference.PreferenceManager;
 
 public class Preferences {
 
+    public static final int SELECTION_ALL_SETS = 0;
+    public static final int SELECTION_MY_SETS = 1;
+    public static final int SELECTION_MY_CLASSES_SETS = 2;
+    public static final int SELECTION_FAVORITE_SETS = 3;
+
     private static Preferences instance = null;
 
     private Context context = null;
@@ -105,23 +110,23 @@ public class Preferences {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         prefs.edit()
-            .remove(getSyncedKey(RetrieveMySetsTask.SELECTION_MY_SETS))
-            .remove(getSyncedKey(RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS))
-            .remove(getSyncedKey(RetrieveMySetsTask.SELECTION_FAVORITE_SETS))
-            .remove(getSyncedKey(RetrieveMySetsTask.SELECTION_ALL))
+            .remove(getSyncedKey(SELECTION_MY_SETS))
+            .remove(getSyncedKey(SELECTION_MY_CLASSES_SETS))
+            .remove(getSyncedKey(SELECTION_FAVORITE_SETS))
+            .remove(getSyncedKey(SELECTION_ALL_SETS))
             .commit();
     }
 
     private String getSyncedKey(int selection) {
         String key;
         switch (selection) {
-            case RetrieveMySetsTask.SELECTION_MY_SETS:
+            case SELECTION_MY_SETS:
                 key = "synced_my_sets";
                 break;
-            case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
+            case SELECTION_MY_CLASSES_SETS:
                 key = "synced_my_classes_sets";
                 break;
-            case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
+            case SELECTION_FAVORITE_SETS:
                 key = "synced_favorite_sets";
                 break;
             default:

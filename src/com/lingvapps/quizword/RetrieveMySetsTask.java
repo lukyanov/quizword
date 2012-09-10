@@ -6,10 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
 class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> {
-    public static final int SELECTION_ALL = 0;
-    public static final int SELECTION_MY_SETS = 1;
-    public static final int SELECTION_MY_CLASSES_SETS = 2;
-    public static final int SELECTION_FAVORITE_SETS = 3;
 
     public RetrieveMySetsTask(Context ctx) {
         super(ctx);
@@ -23,13 +19,13 @@ class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> 
             String[] fields = {"id", "name", "term_count"};
             String selection = "";
             switch (selectionId) {
-            case SELECTION_MY_SETS:
+            case Preferences.SELECTION_MY_SETS:
                 selection = "is_my = 1";
                 break;
-            case SELECTION_MY_CLASSES_SETS:
+            case Preferences.SELECTION_MY_CLASSES_SETS:
                 selection = "is_in_class = 1";
                 break;
-            case SELECTION_FAVORITE_SETS:
+            case Preferences.SELECTION_FAVORITE_SETS:
                 selection = "is_favorite = 1";
                 break;
             }

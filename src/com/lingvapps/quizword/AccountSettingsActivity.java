@@ -148,7 +148,6 @@ public class AccountSettingsActivity extends ListMenuActivity {
                 showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
             }
         });
-        // TODO:
-        task.execute(RetrieveMySetsTask.SELECTION_ALL);
+        task.execute(Preferences.SELECTION_ALL_SETS);
     }
 }

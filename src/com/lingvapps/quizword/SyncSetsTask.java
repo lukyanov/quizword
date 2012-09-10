@@ -25,17 +25,17 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         SQLiteDatabase db = storageHelper.getWritableDatabase();
         try {
             switch (selectionType) {
-            case RetrieveMySetsTask.SELECTION_MY_SETS:
+            case Preferences.SELECTION_MY_SETS:
                 storageHelper.clear_my_sets();
                 syncMySets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
-            case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
+            case Preferences.SELECTION_MY_CLASSES_SETS:
                 storageHelper.clear_my_classes_sets();
                 syncClassesSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
-            case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
+            case Preferences.SELECTION_FAVORITE_SETS:
                 storageHelper.clear_favorites();
                 syncFavoriteSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
@@ -45,9 +45,9 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
                 syncMySets(db, user, token);
                 syncClassesSets(db, user, token);
                 syncFavoriteSets(db, user, token);
-                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_MY_SETS);
-                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS);
-                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_FAVORITE_SETS);
+                prefs.setDataSyncedFlag(Preferences.SELECTION_MY_SETS);
+                prefs.setDataSyncedFlag(Preferences.SELECTION_MY_CLASSES_SETS);
+                prefs.setDataSyncedFlag(Preferences.SELECTION_FAVORITE_SETS);
             }
             
             db.close();

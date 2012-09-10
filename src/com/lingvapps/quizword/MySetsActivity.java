@@ -12,7 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MySetsActivity extends ListMenuActivity {
 
-    private int selectionType = RetrieveMySetsTask.SELECTION_MY_SETS;
+    private int selectionType = Preferences.SELECTION_MY_SETS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,13 +22,13 @@ public class MySetsActivity extends ListMenuActivity {
         Bundle params = getIntent().getExtras();
         selectionType = params.getInt("selectionType");
         switch (selectionType) {
-            case RetrieveMySetsTask.SELECTION_MY_SETS:
+            case Preferences.SELECTION_MY_SETS:
                 titleId = R.string.title_activity_my_sets;
                 break;
-            case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
+            case Preferences.SELECTION_MY_CLASSES_SETS:
                 titleId = R.string.title_activity_my_classes_sets;
                 break;
-            case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
+            case Preferences.SELECTION_FAVORITE_SETS:
                 titleId = R.string.title_activity_favorite_sets;
                 break;
         }
