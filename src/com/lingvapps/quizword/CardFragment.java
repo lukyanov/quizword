@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.LayoutInflater;
@@ -213,7 +212,6 @@ public class CardFragment extends Fragment {
     }
 
     private void switchModes() {
-        Log.d("quizword", "switchModes");
         switch (currentMode) {
         case CardLayout.MODE_SINGLE_SIDE:
             currentMode = CardLayout.MODE_TERM_FIRST;

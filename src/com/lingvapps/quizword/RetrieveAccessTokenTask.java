@@ -6,7 +6,6 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 
 class RetrieveAccessTokenTask extends BackgroundTask<String, JSONObject> {
 
@@ -33,7 +32,6 @@ class RetrieveAccessTokenTask extends BackgroundTask<String, JSONObject> {
                 data.put("user_id", token.getString("user_id"));
 
                 prefs.saveUserData(data);
-                Log.d("quizlet", "preferences saved");
 
                 onPostExecuteListener.onSuccess(token);
             } catch (Exception e) {

@@ -6,9 +6,15 @@ emulator:
 emulator-old:
 	emulator-arm -avd NexusOne -no-snapshot-save &
 
-debug:
-	ant debug
-
 run: debug
 	ant debug install
 	adb shell am start com.lingvapps.quizword/.MainMenuActivity
+
+clean:
+	ant clean
+
+debug:
+	ant debug
+
+release:
+	ant release
