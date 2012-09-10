@@ -24,17 +24,9 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         storageHelper.clear_db();
         SQLiteDatabase db = storageHelper.getWritableDatabase();
         try {
-            JSONArray sets = QuizletHTTP.requestMySetsFullDetails(token, user);
-            storeMySetsFullDetails(db, sets);
-
-            JSONArray groups = QuizletHTTP.requestMyGroups(token, user);
-            for (int i = 0; i < groups.length(); i++) {
-                JSONObject group = groups.getJSONObject(i);
-                storeGroupSets(db, group.getJSONArray("sets"), token);
-            }
-
-            sets = QuizletHTTP.requestFavoriteSets(token, user);
-            storeFavoriteSets(db, sets);
+            syncMySets(db, user, token);
+            syncClassesSets(db, user, token);
+            syncFavoriteSets(db, user, token);
             
             prefs.setDataSyncedFlag();
             
@@ -48,7 +40,8 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         }
     }
 
-    private void storeMySetsFullDetails(SQLiteDatabase db, JSONArray ss) throws JSONException {
+    private void syncMySets(SQLiteDatabase db, String user, String token) throws JSONException {
+        JSONArray ss = QuizletHTTP.requestMySetsFullDetails(token, user);
         CardSet cardSet;
         for (int i = 0; i < ss.length(); i++) {
             JSONObject obj = ss.getJSONObject(i);
@@ -58,8 +51,9 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         }
     }
 
-    private void storeFavoriteSets(SQLiteDatabase db, JSONArray ss) throws JSONException {
+    private void syncFavoriteSets(SQLiteDatabase db, String user, String token) throws JSONException {
         CardSet cardSet;
+        JSONArray ss = QuizletHTTP.requestFavoriteSets(token, user);
         for (int i = 0; i < ss.length(); i++) {
             JSONObject obj = ss.getJSONObject(i);
             cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
@@ -68,14 +62,19 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         }
     }
 
-    private void storeGroupSets(SQLiteDatabase db, JSONArray ss, String token) throws JSONException {
+    private void syncClassesSets(SQLiteDatabase db, String user, String token) throws JSONException {
         CardSet cardSet;
-        for (int i = 0; i < ss.length(); i++) {
-            JSONObject obj = ss.getJSONObject(i);
-            cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
-            JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
-            fillCardSet(cardSet, setData.getJSONArray("terms"));
-            storeSetToDatabase(db, cardSet, null, 1, null);
+        JSONArray groups = QuizletHTTP.requestMyGroups(token, user);
+        for (int i = 0; i < groups.length(); i++) {
+            JSONObject group = groups.getJSONObject(i);
+            JSONArray ss = group.getJSONArray("sets");
+            for (int j = 0; i < ss.length(); i++) {
+                JSONObject obj = ss.getJSONObject(j);
+                cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
+                JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
+                fillCardSet(cardSet, setData.getJSONArray("terms"));
+                storeSetToDatabase(db, cardSet, null, 1, null);
+            }
         }
     }
 
@@ -100,6 +99,8 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         if (db.insert("sets", null, values) == -1) {
             // there already is such a set
             values = new ContentValues();
+            if (isMy != null)
+                values.put("is_my", isMy);
             if (isInClass != null)
                 values.put("is_in_class", isInClass);
             if (isFavorite != null)
