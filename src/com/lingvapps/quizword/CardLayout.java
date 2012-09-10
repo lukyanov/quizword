@@ -49,6 +49,14 @@ public class CardLayout extends FrameLayout {
         initSides();
         addView(faceSide);
         addView(backSide);
+        setOnClickListener(new View.OnClickListener() {
+            
+            public void onClick(View v) {
+                if (currentMode != MODE_SINGLE_SIDE) {
+                    flip();
+                }
+            }
+        });
     }
 
     @TargetApi(11)
@@ -61,23 +69,7 @@ public class CardLayout extends FrameLayout {
         backSide.setVisibility(View.GONE);
         currentSide = SIDE_TERM;
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.d("quizword", Integer.valueOf(ev.getAction()).toString());
-        switch (ev.getAction()) {
-        case MotionEvent.ACTION_DOWN:
-            return true;
-        case MotionEvent.ACTION_UP:
-            if (currentMode != MODE_SINGLE_SIDE) {
-                flip();
-            }
-            return true;
-        default:
-            return false;
-        }
-    }
-
+    
     public void setFace(String text) {
         AutoResizeTextView view = (AutoResizeTextView) faceSide.findViewById(R.id.card_term);
         view.setText(text);
