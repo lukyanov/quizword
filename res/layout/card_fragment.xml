@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:alpha="0.3"
-        android:background="@drawable/refresh" />
+        android:background="@drawable/mode_ab" />
     
     <Button
         android:id="@+id/shuffle_button"

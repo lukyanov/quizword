@@ -89,6 +89,7 @@ public class CardFragment extends Fragment {
         fillViewSwitcher(switcher, inflater);
         view.setBackgroundColor(Color.BLACK);
 
+        updateModeButtonBackground(view);
         setButtonListeners(view);
         updateCounterText(view);
 
@@ -225,7 +226,23 @@ public class CardFragment extends Fragment {
             break;
         }
 
+        updateModeButtonBackground(getRootView());
         fillViewSwitcher(getSwitcher());
+    }
+
+    private void updateModeButtonBackground(View view) {
+        Button button = (Button) view.findViewById(R.id.mode_button);
+        switch (currentMode) {
+        case CardLayout.MODE_SINGLE_SIDE:
+            button.setBackgroundResource(R.drawable.mode_ab);
+            break;
+        case CardLayout.MODE_TERM_FIRST:
+            button.setBackgroundResource(R.drawable.mode_a);
+            break;
+        case CardLayout.MODE_DEFINITION_FIRST:
+            button.setBackgroundResource(R.drawable.mode_b);
+            break;
+        }
     }
 
     private ViewGroup getRootView() {
