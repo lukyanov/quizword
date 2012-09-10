@@ -132,9 +132,9 @@ public class AccountSettingsActivity extends ListMenuActivity {
     protected void logout() {
         Preferences prefs = Preferences.getInstance(this);
         prefs.clearUserData();
-        prefs.clearDataSyncedFlag();
+        prefs.clearDataSyncedFlagAll();
         LocalStorageHelper storageHelper = new LocalStorageHelper(this.getApplicationContext());
-        storageHelper.clear_db();
+        storageHelper.clear_all();
         drawMenuList();
     }
     
@@ -148,6 +148,7 @@ public class AccountSettingsActivity extends ListMenuActivity {
                 showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
             }
         });
-        task.execute();
+        // TODO:
+        task.execute(RetrieveMySetsTask.SELECTION_ALL);
     }
 }

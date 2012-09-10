@@ -6,9 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
 class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> {
-    public static final int SELECTION_MY_SETS = 0;
-    public static final int SELECTION_MY_CLASSES_SETS = 1;
-    public static final int SELECTION_FAVORITE_SETS = 2;
+    public static final int SELECTION_ALL = 0;
+    public static final int SELECTION_MY_SETS = 1;
+    public static final int SELECTION_MY_CLASSES_SETS = 2;
+    public static final int SELECTION_FAVORITE_SETS = 3;
 
     public RetrieveMySetsTask(Context ctx) {
         super(ctx);

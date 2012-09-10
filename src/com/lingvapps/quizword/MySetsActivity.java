@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MySetsActivity extends ListMenuActivity {
-    
+
     private int selectionType = RetrieveMySetsTask.SELECTION_MY_SETS;
 
     @Override
@@ -22,31 +22,33 @@ public class MySetsActivity extends ListMenuActivity {
         Bundle params = getIntent().getExtras();
         selectionType = params.getInt("selectionType");
         switch (selectionType) {
-        case RetrieveMySetsTask.SELECTION_MY_SETS:
-            titleId = R.string.title_activity_my_sets;
-            break;
-        case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
-            titleId = R.string.title_activity_my_classes_sets;
-            break;
-        case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
-            titleId = R.string.title_activity_favorite_sets;
-            break;
+            case RetrieveMySetsTask.SELECTION_MY_SETS:
+                titleId = R.string.title_activity_my_sets;
+                break;
+            case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
+                titleId = R.string.title_activity_my_classes_sets;
+                break;
+            case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
+                titleId = R.string.title_activity_favorite_sets;
+                break;
         }
         setTitle(titleId);
         loadSets();
     }
-    
+
     void loadSets() {
         RetrieveMySetsTask task = new RetrieveMySetsTask(this);
         task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<CardSet>>() {
             public void onSuccess(ArrayAdapter<CardSet> adapter) {
-                Preferences prefs = Preferences.getInstance(getApplicationContext());
-                if (prefs.isDataSynced()) {
+                Preferences prefs = Preferences
+                        .getInstance(getApplicationContext());
+                if (prefs.isDataSynced(selectionType)) {
                     drawMenuList(adapter);
                 } else {
                     drawSyncMenu();
                 }
             }
+
             public void onFailure() {
                 drawSyncMenu();
             }
@@ -61,7 +63,8 @@ public class MySetsActivity extends ListMenuActivity {
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
         menuListView.setAdapter(adapter);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+            public void onItemClick(AdapterView<?> l, View v, int position,
+                    long id) {
                 onSyncMenuListItemClick((ListView) l, v, position, id);
             }
         });
@@ -76,28 +79,31 @@ public class MySetsActivity extends ListMenuActivity {
         intent.putExtra("set_name", set.getName());
         startActivity(intent);
     }
-    
+
     protected void executeSyncTask() {
         SyncSetsTask task = new SyncSetsTask(this);
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
             public void onSuccess(Boolean result) {
                 loadSets();
             }
+
             public void onFailure() {
-                showErrorMessage(R.string.sync_error_title, R.string.sync_error_message);
+                showErrorMessage(R.string.sync_error_title,
+                        R.string.sync_error_message);
             }
         });
-        task.execute();
+        task.execute(selectionType);
     }
 
-    protected void onSyncMenuListItemClick(ListView l, View v, int position, long id) {
+    protected void onSyncMenuListItemClick(ListView l, View v, int position,
+            long id) {
         switch (position) {
-        case 0:
-            executeSyncTask();
-            break;
+            case 0:
+                executeSyncTask();
+                break;
         }
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

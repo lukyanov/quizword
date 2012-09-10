@@ -9,26 +9,46 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-class SyncSetsTask extends BackgroundTask<String, Boolean> {
+class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
 
     public SyncSetsTask(Context ctx) {
         super(ctx);
         setMessage(R.string.syncing_message);
     }
 
-    protected Boolean doInBackground(String... params) {
+    protected Boolean doInBackground(Integer... params) {
+        int selectionType = params[0];
         Preferences prefs = Preferences.getInstance(context);
         String user  = prefs.getUserData("user_id");
         String token = prefs.getUserData("access_token");
         LocalStorageHelper storageHelper = new LocalStorageHelper(context);
-        storageHelper.clear_db();
         SQLiteDatabase db = storageHelper.getWritableDatabase();
         try {
-            syncMySets(db, user, token);
-            syncClassesSets(db, user, token);
-            syncFavoriteSets(db, user, token);
-            
-            prefs.setDataSyncedFlag();
+            switch (selectionType) {
+            case RetrieveMySetsTask.SELECTION_MY_SETS:
+                storageHelper.clear_my_sets();
+                syncMySets(db, user, token);
+                prefs.setDataSyncedFlag(selectionType);
+                break;
+            case RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS:
+                storageHelper.clear_my_classes_sets();
+                syncClassesSets(db, user, token);
+                prefs.setDataSyncedFlag(selectionType);
+                break;
+            case RetrieveMySetsTask.SELECTION_FAVORITE_SETS:
+                storageHelper.clear_favorites();
+                syncFavoriteSets(db, user, token);
+                prefs.setDataSyncedFlag(selectionType);
+                break;
+            default:
+                storageHelper.clear_all();
+                syncMySets(db, user, token);
+                syncClassesSets(db, user, token);
+                syncFavoriteSets(db, user, token);
+                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_MY_SETS);
+                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_MY_CLASSES_SETS);
+                prefs.setDataSyncedFlag(RetrieveMySetsTask.SELECTION_FAVORITE_SETS);
+            }
             
             db.close();
             
@@ -68,7 +88,7 @@ class SyncSetsTask extends BackgroundTask<String, Boolean> {
         for (int i = 0; i < groups.length(); i++) {
             JSONObject group = groups.getJSONObject(i);
             JSONArray ss = group.getJSONArray("sets");
-            for (int j = 0; i < ss.length(); i++) {
+            for (int j = 0; j < ss.length(); j++) {
                 JSONObject obj = ss.getJSONObject(j);
                 cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
                 JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
