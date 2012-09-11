@@ -1,0 +1,13 @@
+This is a mobile application to use with Quizlet.com. Quizword allows you to download your public and private card sets from Quizlet.com to your mobile device so you can study words without instant access to the Internet.
+Quizword was implemented with imitating interaction with real physical flashcards in mind.
+The application is optimized for Android 3.0 Honeycomb and higher.
+
+Features:
+* Access to your public and private sets
+* Access to your classes sets
+* Access to your favorite sets
+* Three flashcard view modes
+* Touch gestures
+* Cards shuffling
+* Interactive animation
+* Works offline
