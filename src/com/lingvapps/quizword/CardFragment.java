@@ -89,8 +89,12 @@ public class CardFragment extends Fragment {
         view.setBackgroundColor(Color.BLACK);
 
         updateModeButtonBackground(view);
-        setButtonListeners(view);
         updateCounterText(view);
+
+        View quickTipsView = inflater.inflate(R.layout.quick_tips, container, false);
+        ((ViewGroup) view).addView(quickTipsView);
+
+        setButtonListeners(view);
 
         return view;
     }
@@ -100,7 +104,7 @@ public class CardFragment extends Fragment {
         outState.putInt("currentCard", currentCard);
     }
 
-    private void setButtonListeners(View view) {
+    private void setButtonListeners(final View view) {
         Button buttonMode = (Button) view.findViewById(R.id.mode_button);
         buttonMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -121,26 +125,35 @@ public class CardFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+
+        Button buttonCloseTips = (Button) view.findViewById(R.id.close_button);
+        if (buttonCloseTips != null) {
+            buttonCloseTips.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    getRootView().removeView(view.findViewById(R.id.quick_tips));
+                }
+            });
+        }
     }
 
     private void fillViewSwitcher(ViewSwitcher view) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         fillViewSwitcher(view, inflater);
     }
-    
+
     private void fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
         view.removeAllViews();
         for (Card card : cardSet) {
             CardLayout layout = new CardLayout(this.getActivity());
             switch (currentMode) {
-            case CardLayout.MODE_DEFINITION_FIRST:
-                layout.setFace(card.getDefinition());
-                layout.setBack(card.getTerm());
-                break;
-            default:
-                layout.setFace(card.getTerm());
-                layout.setBack(card.getDefinition());
-                break;
+                case CardLayout.MODE_DEFINITION_FIRST:
+                    layout.setFace(card.getDefinition());
+                    layout.setBack(card.getTerm());
+                    break;
+                default:
+                    layout.setFace(card.getTerm());
+                    layout.setBack(card.getDefinition());
+                    break;
             }
             layout.setCurrentMode(currentMode);
             view.addView(layout);
@@ -177,7 +190,7 @@ public class CardFragment extends Fragment {
         animSecond.setDuration(500);
         animSecond.setInterpolator(new DecelerateInterpolator());
         view.setRotation(540.0f);
-        
+
 
         animSecond.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -186,7 +199,7 @@ public class CardFragment extends Fragment {
                 updateCounterText(getRootView());
             }
         });
-        
+
         final Card card = cardSet.getCard(0);
 
         animFirst.addListener(new AnimatorListenerAdapter() {
@@ -195,16 +208,16 @@ public class CardFragment extends Fragment {
                 animSecond.start();
                 currentCard = 0;
                 switch (currentMode) {
-                case CardLayout.MODE_TERM_FIRST:
-                    view.setFace(card.getTerm());
-                    break;
-                case CardLayout.MODE_DEFINITION_FIRST:
-                    view.setFace(card.getDefinition());
-                    break;
-                case CardLayout.MODE_SINGLE_SIDE:
-                    view.setFace(card.getTerm());
-                    view.setBack(card.getDefinition());
-                    break;
+                    case CardLayout.MODE_TERM_FIRST:
+                        view.setFace(card.getTerm());
+                        break;
+                    case CardLayout.MODE_DEFINITION_FIRST:
+                        view.setFace(card.getDefinition());
+                        break;
+                    case CardLayout.MODE_SINGLE_SIDE:
+                        view.setFace(card.getTerm());
+                        view.setBack(card.getDefinition());
+                        break;
                 }
             }
         });
@@ -213,15 +226,15 @@ public class CardFragment extends Fragment {
 
     private void switchModes() {
         switch (currentMode) {
-        case CardLayout.MODE_SINGLE_SIDE:
-            currentMode = CardLayout.MODE_TERM_FIRST;
-            break;
-        case CardLayout.MODE_TERM_FIRST:
-            currentMode = CardLayout.MODE_DEFINITION_FIRST;
-            break;
-        case CardLayout.MODE_DEFINITION_FIRST:
-            currentMode = CardLayout.MODE_SINGLE_SIDE;
-            break;
+            case CardLayout.MODE_SINGLE_SIDE:
+                currentMode = CardLayout.MODE_TERM_FIRST;
+                break;
+            case CardLayout.MODE_TERM_FIRST:
+                currentMode = CardLayout.MODE_DEFINITION_FIRST;
+                break;
+            case CardLayout.MODE_DEFINITION_FIRST:
+                currentMode = CardLayout.MODE_SINGLE_SIDE;
+                break;
         }
 
         updateModeButtonBackground(getRootView());
@@ -231,15 +244,15 @@ public class CardFragment extends Fragment {
     private void updateModeButtonBackground(View view) {
         Button button = (Button) view.findViewById(R.id.mode_button);
         switch (currentMode) {
-        case CardLayout.MODE_SINGLE_SIDE:
-            button.setBackgroundResource(R.drawable.mode_ab);
-            break;
-        case CardLayout.MODE_TERM_FIRST:
-            button.setBackgroundResource(R.drawable.mode_a);
-            break;
-        case CardLayout.MODE_DEFINITION_FIRST:
-            button.setBackgroundResource(R.drawable.mode_b);
-            break;
+            case CardLayout.MODE_SINGLE_SIDE:
+                button.setBackgroundResource(R.drawable.mode_ab);
+                break;
+            case CardLayout.MODE_TERM_FIRST:
+                button.setBackgroundResource(R.drawable.mode_a);
+                break;
+            case CardLayout.MODE_DEFINITION_FIRST:
+                button.setBackgroundResource(R.drawable.mode_b);
+                break;
         }
     }
 
