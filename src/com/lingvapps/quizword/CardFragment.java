@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +26,12 @@ public class CardFragment extends Fragment {
 
     private int currentMode = CardLayout.MODE_SINGLE_SIDE;
     private int currentCard = 0;
+    private boolean showQuickTips = true;
 
     private CardSet cardSet = null;
 
     private ShakeListener shaker;
-
+    
     static CardFragment newInstance(Integer set_id, String set_name) {
         CardFragment f = new CardFragment();
 
@@ -91,10 +93,11 @@ public class CardFragment extends Fragment {
         updateModeButtonBackground(view);
         updateCounterText(view);
 
-        View quickTipsView = inflater.inflate(R.layout.quick_tips, container, false);
-        ((ViewGroup) view).addView(quickTipsView);
-
         setButtonListeners(view);
+
+        if (showQuickTips && !Preferences.getInstance(getActivity()).isTipsHidden()) {
+            drawQuickTips(view, inflater, container);
+        }
 
         return view;
     }
@@ -125,15 +128,23 @@ public class CardFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    private void drawQuickTips(final View view, LayoutInflater inflater, ViewGroup container) {
+        View quickTipsView = inflater.inflate(R.layout.quick_tips, container, false);
+        ((ViewGroup) view).addView(quickTipsView);
 
         Button buttonCloseTips = (Button) view.findViewById(R.id.close_button);
-        if (buttonCloseTips != null) {
-            buttonCloseTips.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    getRootView().removeView(view.findViewById(R.id.quick_tips));
+        buttonCloseTips.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CheckBox checkbox = (CheckBox) view.findViewById(R.id.next_time_check_box);
+                if (!checkbox.isChecked()) {
+                    Preferences.getInstance(getActivity()).setHideTipsFlag();
                 }
-            });
-        }
+                showQuickTips = false;
+                getRootView().removeView(view.findViewById(R.id.quick_tips));
+            }
+        });
     }
 
     private void fillViewSwitcher(ViewSwitcher view) {

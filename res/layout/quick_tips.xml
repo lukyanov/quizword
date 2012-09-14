@@ -7,74 +7,84 @@
     android:background="@android:color/black"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="5dp" >
-
-        <TextView
-            style="@style/QuickTipsText"
-            android:gravity="center"
-            android:text="Quick tips:"
-            android:textStyle="bold" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <ImageView
-                style="@style/QuickTipsImage"
-                android:src="@drawable/navigation_back" />
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp" >
 
             <TextView
                 style="@style/QuickTipsText"
-                android:text="Exit card mode" />
-        </LinearLayout>
+                android:gravity="center"
+                android:text="Quick tips:"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
 
-            <ImageView
-                style="@style/QuickTipsImage"
-                android:src="@drawable/shuffle" />
+                <ImageView
+                    style="@style/QuickTipsImage"
+                    android:src="@drawable/navigation_back" />
+
+                <TextView
+                    style="@style/QuickTipsText"
+                    android:text="Exit card mode" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    style="@style/QuickTipsImage"
+                    android:src="@drawable/shuffle" />
+
+                <TextView
+                    style="@style/QuickTipsText"
+                    android:text="Shuffle cards in set (you can also shake the device)" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    style="@style/QuickTipsImage"
+                    android:src="@drawable/mode_ab" />
+
+                <TextView
+                    style="@style/QuickTipsText"
+                    android:text="Switch side modes" />
+            </LinearLayout>
 
             <TextView
                 style="@style/QuickTipsText"
-                android:text="Shuffle cards in set (you can also shake the device for this)" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <ImageView
-                style="@style/QuickTipsImage"
-                android:src="@drawable/mode_ab" />
+                android:layout_marginTop="10dp"
+                android:text="- Tap once to flip a card (in two side modes)" />
 
             <TextView
                 style="@style/QuickTipsText"
-                android:text="Switch side modes" />
+                android:text="- Slide a card to see the next one" />
+
+            <TextView
+                style="@style/QuickTipsText"
+                android:text="- Shake the device to shuffle cards" />
         </LinearLayout>
-
-        <TextView
-            style="@style/QuickTipsText"
-            android:layout_marginTop="10dp"
-            android:text="- Tap once to flip a card (in two side modes)" />
-
-        <TextView
-            style="@style/QuickTipsText"
-            android:text="- Slide a card to see the next one" />
-
-        <TextView
-            style="@style/QuickTipsText"
-            android:text="- Shake the device to shuffle cards" />
-    </LinearLayout>
+    </ScrollView>
 
     <CheckBox
         android:id="@+id/next_time_check_box"
@@ -88,7 +98,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:alpha="1"
         android:text="Close"
         android:textColor="@android:color/white" />
 

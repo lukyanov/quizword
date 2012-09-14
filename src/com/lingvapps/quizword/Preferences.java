@@ -117,6 +117,18 @@ public class Preferences {
             .commit();
     }
 
+    public void setHideTipsFlag() {
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean("hide_quick_tips", true).commit();
+    }
+
+    public Boolean isTipsHidden() {
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return prefs.getBoolean("hide_quick_tips", false);
+    }
+
     private String getSyncedKey(int selection) {
         String key;
         switch (selection) {
