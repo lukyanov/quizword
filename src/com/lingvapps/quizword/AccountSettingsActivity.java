@@ -15,14 +15,12 @@ import android.widget.ListView;
 public class AccountSettingsActivity extends ListMenuActivity {
     
     private static String quizletAuthState = new BigInteger(32, new SecureRandom()).toString();
-    private String redirectURI;
     
     private Boolean flagAuthErrorOccured = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        redirectURI = getString(R.string.app_id) + ":/after_auth";
         setActionBar();
         drawMenuList();
     }
@@ -88,7 +86,7 @@ public class AccountSettingsActivity extends ListMenuActivity {
                 showErrorMessage(R.string.auth_error_title, R.string.auth_error_message);
             }
         });
-        task.execute(code, redirectURI);
+        task.execute(code, QuizletHTTP.REDIRECT_URI);
     }
     
     @Override
@@ -124,7 +122,7 @@ public class AccountSettingsActivity extends ListMenuActivity {
         intent = new Intent(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         String authURL = QuizletHTTP.getAuthorizitionURL("read",
-                quizletAuthState, redirectURI);
+                quizletAuthState, QuizletHTTP.REDIRECT_URI);
         intent.setData(Uri.parse(authURL));
         startActivity(intent);
     }
