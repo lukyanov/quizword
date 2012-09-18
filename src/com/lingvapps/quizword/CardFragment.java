@@ -32,12 +32,14 @@ public class CardFragment extends Fragment {
 
     private ShakeListener shaker;
     
-    static CardFragment newInstance(Integer set_id, String set_name) {
+    static CardFragment newInstance(Integer setId, String setName, String langTerms, String langDefinitions) {
         CardFragment f = new CardFragment();
 
         Bundle args = new Bundle();
-        args.putInt("set_id", set_id);
-        args.putString("set_name", set_name);
+        args.putInt("set_id", setId);
+        args.putString("set_name", setName);
+        args.putString("lang_terms", langTerms);
+        args.putString("lang_definitions", langDefinitions);
         f.setArguments(args);
 
         return f;
@@ -53,9 +55,11 @@ public class CardFragment extends Fragment {
             currentCard = savedInstanceState.getInt("currentCard");
         }
 
-        if (getArguments() != null) {
-            readCards(getArguments().getInt("set_id"), getArguments()
-                    .getString("set_name"));
+        Bundle args = getArguments();
+        if (args != null) {
+            cardSet = new CardSet(args.getInt("set_id"), args.getString("set_name"),
+                    args.getString("lang_terms"), args.getString("lang_definitions"));
+            readCards();
         }
 
         shaker = new ShakeListener(getActivity());
@@ -276,7 +280,7 @@ public class CardFragment extends Fragment {
         return (ViewSwitcher) getRootView().getChildAt(0);
     }
 
-    private void readCards(Integer setId, String setName) {
+    private void readCards() {
         RetrieveSetTask task = new RetrieveSetTask(getActivity());
         task.setOnPostExecuteListener(new RetrieveSetTask.OnPostExecuteListener<CardSet>() {
             public void onSuccess(CardSet set) {
@@ -287,7 +291,7 @@ public class CardFragment extends Fragment {
             public void onFailure() {
             }
         });
-        task.execute(setId.toString(), setName);
+        task.execute(cardSet);
     }
 
     private void refresh() {

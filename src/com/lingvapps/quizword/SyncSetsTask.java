@@ -65,7 +65,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         CardSet cardSet;
         for (int i = 0; i < ss.length(); i++) {
             JSONObject obj = ss.getJSONObject(i);
-            cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
+            cardSet = createCardSet(obj);
             fillCardSet(cardSet, obj.getJSONArray("terms"));
             storeSetToDatabase(db, cardSet, 1, null, null);
         }
@@ -76,7 +76,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         JSONArray ss = QuizletHTTP.requestFavoriteSets(token, user);
         for (int i = 0; i < ss.length(); i++) {
             JSONObject obj = ss.getJSONObject(i);
-            cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
+            cardSet = createCardSet(obj);
             fillCardSet(cardSet, obj.getJSONArray("terms"));
             storeSetToDatabase(db, cardSet, null, null, 1);
         }
@@ -90,12 +90,16 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
             JSONArray ss = group.getJSONArray("sets");
             for (int j = 0; j < ss.length(); j++) {
                 JSONObject obj = ss.getJSONObject(j);
-                cardSet = new CardSet(obj.getInt("id"), obj.getString("title"));
+                cardSet = createCardSet(obj);
                 JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
                 fillCardSet(cardSet, setData.getJSONArray("terms"));
                 storeSetToDatabase(db, cardSet, null, 1, null);
             }
         }
+    }
+
+    private CardSet createCardSet(JSONObject obj) throws JSONException {
+        return new CardSet(obj.getInt("id"), obj.getString("title"), obj.getString("lang_terms"), obj.getString("lang_definitions"));
     }
 
     private void fillCardSet(CardSet cardSet, JSONArray terms) throws JSONException {
@@ -114,8 +118,12 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
             values.put("is_in_class", isInClass);
         if (isFavorite != null)
             values.put("is_favorite", isFavorite);
+
         values.put("name", cardSet.getName());
+        values.put("lang_terms", cardSet.getLangTerms());
+        values.put("lang_definitions", cardSet.getLangDefinitions());
         values.put("term_count", cardSet.size());
+
         if (db.insert("sets", null, values) == -1) {
             // there already is such a set
             values = new ContentValues();

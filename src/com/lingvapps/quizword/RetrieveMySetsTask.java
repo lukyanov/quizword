@@ -16,7 +16,7 @@ class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> 
         try {
             LocalStorageHelper storageHelper = new LocalStorageHelper(context);
             SQLiteDatabase db = storageHelper.getReadableDatabase();
-            String[] fields = {"id", "name", "term_count"};
+            String[] fields = {"id", "name", "lang_terms", "lang_definitions", "term_count"};
             String selection = "";
             switch (selectionId) {
             case Preferences.SELECTION_MY_SETS:
@@ -34,7 +34,7 @@ class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> 
             int i = 0;
             while (cursor.moveToNext()) {
                 sets[i] = new CardSet(cursor.getInt(0),
-                        cursor.getString(1), cursor.getInt(2));
+                        cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4));
                 i++;
             }
             db.close();

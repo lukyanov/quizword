@@ -6,21 +6,27 @@ import java.util.Iterator;
 
 public class CardSet implements Iterable<Card> {
     
-    private String name;
+    private String  name;
     private Integer id;
     private Integer termCount = 0;
+    private String  langTerms;
+    private String  langDefinitions;
     private ArrayList<Card> cards;
     
-    public CardSet(Integer id, String name) {
+    public CardSet(Integer id, String name, String langTerms, String langDefinitions) {
         this.id = id;
         this.name = name;
+        this.langTerms = langTerms;
+        this.langDefinitions = langDefinitions;
         this.termCount = 0;
         this.cards = new ArrayList<Card>();
     }
     
-    public CardSet(Integer id, String name, Integer termCount) {
+    public CardSet(Integer id, String name, String langTerms, String langDefinition, Integer termCounts) {
         this.id = id;
         this.name = name;
+        this.langTerms = langTerms;
+        this.langDefinitions = langDefinitions;
         this.termCount = termCount;
         this.cards = new ArrayList<Card>();
     }
@@ -50,6 +56,14 @@ public class CardSet implements Iterable<Card> {
 
     public String getName() {
         return name;
+    }
+
+    public String getLangTerms() {
+        return langTerms;
+    }
+
+    public String getLangDefinitions() {
+        return langDefinitions;
     }
     
     public Integer getCardsCount() {

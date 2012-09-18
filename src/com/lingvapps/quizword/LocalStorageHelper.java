@@ -6,16 +6,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class LocalStorageHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "quizword";
 
     private static final String CARD_TABLE_NAME = "cards";
     private static final String CARD_TABLE_CREATE =
-                "CREATE TABLE " + CARD_TABLE_NAME + " (" +
-                "id int primary key, " +
-                "set_id int, " +
-                "term varchar(255), " +
-                "definition varchar(255));";
+            "CREATE TABLE " + CARD_TABLE_NAME + " (" +
+            "id int primary key, " +
+            "set_id int, " +
+            "term varchar(255), " +
+            "definition varchar(255));";
     private static final String CARD_INDEX_CREATE =
             "CREATE INDEX " + CARD_TABLE_NAME + "_set_id ON " +
             CARD_TABLE_NAME + " (set_id)";
@@ -28,6 +28,8 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
             "is_in_class int DEFAULT 0, " +
             "is_favorite int DEFAULT 0, " +
             "name varchar(255), " +
+            "lang_terms char(2) NOT NULL, " +
+            "lang_definitions char(2) NOT NULL, " +
             "term_count int default 0);";
     private static final String SET_INDEX1_CREATE =
             "CREATE INDEX " + SET_TABLE_NAME + "_is_my ON " +
