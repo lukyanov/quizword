@@ -10,7 +10,9 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -410,17 +412,16 @@ public class CardFragment extends Fragment {
         String filePath = playList.get(index);
         Log.d("quizword", filePath);
         try {
-            File file = new File(filePath);
-            MediaPlayer mp = MediaPlayer.create(getActivity(), Uri.fromFile(file));
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    if (index < playList.size() - 1) {
-                        play(playList, index + 1);
-                    }
+            SoundPool sp = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+            AudioManager mgr = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+            final int streamVolume = mgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+            sp.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                    soundPool.play(sampleId, streamVolume, streamVolume, 1, 0, 1f);
+                    //soundPool.release();
                 }
             });
-            mp.start();
+            sp.load(filePath, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
