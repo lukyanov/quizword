@@ -20,7 +20,7 @@ class RetrieveSetTask extends BackgroundTask<CardSet, CardSet> {
             String[] whereArgs = {set.getId().toString()};
             Cursor cursor = db.query("cards", fields, "set_id = ?", whereArgs, null, null, null);
             while (cursor.moveToNext()) {
-                set.addCard(new Card(cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
+                set.addCard(new Card(set, cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
             }
             db.close();
             return set;

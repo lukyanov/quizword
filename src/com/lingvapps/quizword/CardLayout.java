@@ -21,14 +21,21 @@ public class CardLayout extends FrameLayout {
     public static final int MODE_TERM_FIRST = 1;
     public static final int MODE_DEFINITION_FIRST = 2;
 
-    private static final int SIDE_TERM = 3;
-    private static final int SIDE_DEFINITION = 4;
+    private static final int SIDE_FACE = 3;
+    private static final int SIDE_BACK = 4;
+
+    private Card card;
 
     private View faceSide = null;
     private View backSide = null;
 
-    private int currentMode = MODE_SINGLE_SIDE;
-    private int currentSide = SIDE_TERM;
+    private int mode = MODE_SINGLE_SIDE;
+
+    // make sense only for double side modes
+    private int currentSide;
+    private String currentSideType;
+    private String currentSideText;
+    private String currentSideLang;
 
     private Interpolator accelerator = new AccelerateInterpolator();
     private Interpolator decelerator = new DecelerateInterpolator();
@@ -37,34 +44,68 @@ public class CardLayout extends FrameLayout {
         public void onStop();
     }
 
-    public CardLayout(Context context) {
+    public CardLayout(Context context, Card card, final int mode) {
         super(context);
+        
+        this.card = card;
+        this.mode = mode;
+        
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         faceSide = layoutInflater.inflate(R.layout.card_face, null);
         backSide = layoutInflater.inflate(R.layout.card_back, null);
-        initSides();
         addView(faceSide);
         addView(backSide);
+        
         setOnClickListener(new View.OnClickListener() {
-            
             public void onClick(View v) {
-                if (currentMode != MODE_SINGLE_SIDE) {
+                if (mode != MODE_SINGLE_SIDE) {
                     flip();
                 }
             }
         });
+
+        init();
     }
 
     @TargetApi(11)
-    private void initSides() {
+    private void init() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             faceSide.setRotationY(0f);
             backSide.setRotationY(-90f);
         }
         faceSide.setVisibility(View.VISIBLE);
         backSide.setVisibility(View.GONE);
-        currentSide = SIDE_TERM;
+        initMode();
     }
+
+    private void initMode() {
+        int definitionVisibility = View.VISIBLE;
+        switch (mode) {
+        case MODE_SINGLE_SIDE:
+            setFace(card.getTerm());
+            setBack(card.getDefinition());
+            currentSide = -1;
+            setSingleSide();
+            definitionVisibility = View.VISIBLE;
+            break;
+        case MODE_TERM_FIRST:
+            setFace(card.getTerm());
+            setBack(card.getDefinition());
+            currentSide = SIDE_FACE;
+            setTermSide();
+            definitionVisibility = View.GONE;
+            break;
+        case MODE_DEFINITION_FIRST:
+            setFace(card.getDefinition());
+            setBack(card.getTerm());
+            currentSide = SIDE_FACE;
+            setDefinitionSide();
+            definitionVisibility = View.GONE;
+            break;
+        }
+        faceSide.findViewById(R.id.card_definition).setVisibility(definitionVisibility);
+    }
+    
     
     public void setFace(String text) {
         AutoResizeTextView view = (AutoResizeTextView) faceSide.findViewById(R.id.card_term);
@@ -81,65 +122,92 @@ public class CardLayout extends FrameLayout {
         view.resizeText();
     }
 
-    public void setCurrentMode(int mode) {
-        if (currentMode == mode) {
-            return;
-        }
-        int definitionVisibility = View.VISIBLE;
-        switch (mode) {
-        case MODE_SINGLE_SIDE:
-            definitionVisibility = View.VISIBLE;
-            break;
-        default:
-            definitionVisibility = View.GONE;
-            break;
-        }
-        faceSide.findViewById(R.id.card_definition).setVisibility(definitionVisibility);
-        currentMode = mode;
+    public String getCurrentSideText() {
+        return currentSideText;
     }
 
-    @TargetApi(11)
-    private void flip() {
-        final View viewVisible;
-        final View viewInvisible;
-        final int directionSign;
+    public String getCurrentSideLang() {
+        return currentSideLang;
+    }
+    
+    public String getCurrentSideType() {
+        return currentSideType;
+    }
+    
+    private void setTermSide() {
+        currentSideType = "term";
+        currentSideText = card.getTerm();
+        currentSideLang = card.getCardSet().getLangTerms();
+    }
+    
+    private void setDefinitionSide() {
+        currentSideType = "definition";
+        currentSideText = card.getDefinition();
+        currentSideLang = card.getCardSet().getLangDefinitions();
+    }
+    
+    private void setSingleSide() {
+        currentSideType = null;
+        currentSideText = null;
+        currentSideLang = null;
+    }
 
-        if (currentSide == SIDE_TERM) {
+    private void flip() {
+        View viewVisible;
+        View viewInvisible;
+        int directionSign;
+
+        if (currentSide == SIDE_FACE) {
             viewVisible = faceSide;
             viewInvisible = backSide;
-            currentSide = SIDE_DEFINITION;
+            currentSide = SIDE_BACK;
+            if (mode == MODE_TERM_FIRST) {
+                setDefinitionSide();
+            } else {
+                setTermSide();
+            }
             directionSign = 1;
         } else {
             viewVisible = backSide;
             viewInvisible = faceSide;
-            currentSide = SIDE_TERM;
-            directionSign = -   1;
+            currentSide = SIDE_FACE;
+            if (mode == MODE_TERM_FIRST) {
+                setTermSide();
+            } else {
+                setDefinitionSide();
+            }
+            directionSign = -1;
         }
 
-        //float scale = getResources().getDisplayMetrics().density;
-        //view.setCameraDistance(1.5f * scale);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-
-            ObjectAnimator visToInvis = ObjectAnimator.ofFloat(viewVisible, "rotationY", 0f, directionSign * 90f);
-            visToInvis.setDuration(300);
-            visToInvis.setInterpolator(accelerator);
-            final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(viewInvisible, "rotationY",
-                    (-directionSign) * 90f, 0f);
-            invisToVis.setDuration(300);
-            invisToVis.setInterpolator(decelerator);
-            visToInvis.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator anim) {
-                    viewVisible.setVisibility(View.GONE);
-                    invisToVis.start();
-                    viewInvisible.setVisibility(View.VISIBLE);
-                }
-            });
-            visToInvis.start();
+            runFlipAnimation(viewVisible, viewInvisible, directionSign);
         } else {
             viewVisible.setVisibility(View.GONE);
             viewInvisible.setVisibility(View.VISIBLE);
         }
+    }
+
+    @TargetApi(11)
+    private void runFlipAnimation(final View viewVisible, final View viewInvisible, final int directionSign) {
+
+        //float scale = getResources().getDisplayMetrics().density;
+        //view.setCameraDistance(1.5f * scale);
+
+        ObjectAnimator visToInvis = ObjectAnimator.ofFloat(viewVisible, "rotationY", 0f, directionSign * 90f);
+        visToInvis.setDuration(300);
+        visToInvis.setInterpolator(accelerator);
+        final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(viewInvisible, "rotationY",
+                (-directionSign) * 90f, 0f);
+        invisToVis.setDuration(300);
+        invisToVis.setInterpolator(decelerator);
+        visToInvis.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator anim) {
+                viewVisible.setVisibility(View.GONE);
+                invisToVis.start();
+                viewInvisible.setVisibility(View.VISIBLE);
+            }
+        });
+        visToInvis.start();
     }
 }

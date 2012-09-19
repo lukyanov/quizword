@@ -35,6 +35,12 @@ public class CacheManager {
             os.close();
         }
     }
+    
+    public static Boolean cacheExists(Context context, String name) {
+        File cacheDir = context.getCacheDir();
+        File file = new File(cacheDir, name);
+        return file.exists();
+    }
 
     public static byte[] retrieveData(Context context, String name)
             throws IOException {

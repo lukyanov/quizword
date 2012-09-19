@@ -1,12 +1,15 @@
 package com.lingvapps.quizword;
 
 public class Card {
+    private CardSet parentCardSet;
+
     private Integer id;
     private String term;
     private String definition;
     
-    public Card(Integer id, String term, String definition) {
+    public Card(CardSet cardSet, Integer id, String term, String definition) {
         this.id = id;
+        this.parentCardSet = cardSet;
         setTerm(term);
         setDefinition(definition);
     }
@@ -29,6 +32,10 @@ public class Card {
 
     public void setDefinition(String definition) {
         this.definition = definition;
+    }
+
+    public CardSet getCardSet() {
+        return parentCardSet;
     }
     
     public String toString() {

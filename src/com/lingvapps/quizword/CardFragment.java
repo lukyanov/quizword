@@ -1,8 +1,7 @@
 package com.lingvapps.quizword;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
+import java.util.Vector;
 
 import de.marcreichelt.android.RealViewSwitcher;
 import android.animation.Animator;
@@ -17,14 +16,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -43,7 +40,8 @@ public class CardFragment extends Fragment {
 
     private ShakeListener shaker;
 
-    static CardFragment newInstance(Integer setId, String setName, String langTerms, String langDefinitions) {
+    static CardFragment newInstance(Integer setId, String setName,
+            String langTerms, String langDefinitions) {
         CardFragment f = new CardFragment();
 
         Bundle args = new Bundle();
@@ -69,8 +67,9 @@ public class CardFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             Log.d("quizword", args.getString("lang_terms"));
-            cardSet = new CardSet(args.getInt("set_id"), args.getString("set_name"),
-                    args.getString("lang_terms"), args.getString("lang_definitions"));
+            cardSet = new CardSet(args.getInt("set_id"),
+                    args.getString("set_name"), args.getString("lang_terms"),
+                    args.getString("lang_definitions"));
             readCards();
         }
 
@@ -102,7 +101,8 @@ public class CardFragment extends Fragment {
         }
 
         View view = inflater.inflate(R.layout.card_fragment, container, false);
-        ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
+        ViewSwitcher switcher = (ViewSwitcher) view
+                .findViewById(R.id.view_switcher);
         fillViewSwitcher(switcher, inflater);
         view.setBackgroundColor(Color.BLACK);
 
@@ -111,7 +111,8 @@ public class CardFragment extends Fragment {
 
         setButtonListeners(view);
 
-        if (showQuickTips && !Preferences.getInstance(getActivity()).isTipsHidden()) {
+        if (showQuickTips
+                && !Preferences.getInstance(getActivity()).isTipsHidden()) {
             drawQuickTips(view, inflater, container);
         }
 
@@ -153,14 +154,17 @@ public class CardFragment extends Fragment {
         });
     }
 
-    private void drawQuickTips(final View view, LayoutInflater inflater, ViewGroup container) {
-        View quickTipsView = inflater.inflate(R.layout.quick_tips, container, false);
+    private void drawQuickTips(final View view, LayoutInflater inflater,
+            ViewGroup container) {
+        View quickTipsView = inflater.inflate(R.layout.quick_tips, container,
+                false);
         ((ViewGroup) view).addView(quickTipsView);
 
         Button buttonCloseTips = (Button) view.findViewById(R.id.close_button);
         buttonCloseTips.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                CheckBox checkbox = (CheckBox) view.findViewById(R.id.next_time_check_box);
+                CheckBox checkbox = (CheckBox) view
+                        .findViewById(R.id.next_time_check_box);
                 if (!checkbox.isChecked()) {
                     Preferences.getInstance(getActivity()).setHideTipsFlag();
                 }
@@ -171,25 +175,15 @@ public class CardFragment extends Fragment {
     }
 
     private void fillViewSwitcher(ViewSwitcher view) {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         fillViewSwitcher(view, inflater);
     }
 
     private void fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
         view.removeAllViews();
         for (Card card : cardSet) {
-            CardLayout layout = new CardLayout(this.getActivity());
-            switch (currentMode) {
-                case CardLayout.MODE_DEFINITION_FIRST:
-                    layout.setFace(card.getDefinition());
-                    layout.setBack(card.getTerm());
-                    break;
-                default:
-                    layout.setFace(card.getTerm());
-                    layout.setBack(card.getDefinition());
-                    break;
-            }
-            layout.setCurrentMode(currentMode);
+            CardLayout layout = new CardLayout(this.getActivity(), card, currentMode);
             view.addView(layout);
         }
 
@@ -208,23 +202,26 @@ public class CardFragment extends Fragment {
             currentCard = 0;
             fillViewSwitcher(getSwitcher());
             updateCounterText(getRootView());
-            Toast.makeText(getActivity(), R.string.shuffled_message, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.shuffled_message,
+                    Toast.LENGTH_LONG).show();
         }
     }
 
     @TargetApi(11)
     public void turnEffect() {
-        final CardLayout view = (CardLayout) getSwitcher().getChildAt(currentCard);
+        final CardLayout view = (CardLayout) getSwitcher().getChildAt(
+                currentCard);
 
-        ObjectAnimator animFirst = ObjectAnimator.ofFloat(view, "rotation", 0.0f, 540.0f);
+        ObjectAnimator animFirst = ObjectAnimator.ofFloat(view, "rotation",
+                0.0f, 540.0f);
         animFirst.setInterpolator(new AccelerateInterpolator());
         animFirst.setDuration(500);
 
-        final ObjectAnimator animSecond = ObjectAnimator.ofFloat(view, "rotation", 540.0f, 3*360.0f);
+        final ObjectAnimator animSecond = ObjectAnimator.ofFloat(view,
+                "rotation", 540.0f, 3 * 360.0f);
         animSecond.setDuration(500);
         animSecond.setInterpolator(new DecelerateInterpolator());
         view.setRotation(540.0f);
-
 
         animSecond.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -315,7 +312,7 @@ public class CardFragment extends Fragment {
 
     private void refresh() {
         getFragmentManager().beginTransaction().detach(this).attach(this)
-        .commit();
+                .commit();
     }
 
     private void updateCounterText(View rootView) {
@@ -326,41 +323,103 @@ public class CardFragment extends Fragment {
     }
 
     private void say() {
-        final Button button = (Button) getRootView().findViewById(R.id.speech_button);
+        final Button button = (Button) getRootView().findViewById(
+                R.id.speech_button);
         final ProgressBar bar = new ProgressBar(getActivity());
         final RelativeLayout parent = (RelativeLayout) button.getParent();
         final int index = parent.indexOfChild(button);
 
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button
+                .getLayoutParams();
         bar.setLayoutParams(params);
 
         parent.removeView(button);
         parent.addView(bar, index);
 
-        RetrieveSpeechTask task = new RetrieveSpeechTask(getActivity());
-        task.setOnPostExecuteListener(new RetrieveSpeechTask.OnPostExecuteListener<String>() {
-            public void onSuccess(String filePath) {
+        runSpeechTasks(new RetrieveSpeechTask.OnPostExecuteListener<Boolean>() {
+            public void onSuccess(Boolean result) {
                 parent.removeView(bar);
                 parent.addView(button, index);
-                playFile(filePath);
             }
+
             public void onFailure() {
                 parent.removeView(bar);
                 parent.addView(button, index);
             }
         });
-        task.execute(cardSet.getLangTerms(), "test", "1");
     }
 
-    private void playFile(String filePath) {
+    private void runSpeechTasks(
+            final RetrieveSpeechTask.OnPostExecuteListener<Boolean> listener) {
+
+        final Card card = cardSet.getCard(currentCard);
+        final CardLayout cl = (CardLayout) getSwitcher().getChildAt(currentCard);
+        final String id = card.getId().toString();
+        final Vector<String> playList = new Vector<String>();
+
+        if (currentMode == CardLayout.MODE_SINGLE_SIDE) {
+            runSpeechTask(id + "_term", card.getTerm(), cardSet.getLangTerms(),
+                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
+                        public void onSuccess(String filePath) {
+                            playList.add(filePath);
+                            runSpeechTask(
+                                    id + "_definition",
+                                    card.getDefinition(),
+                                    cardSet.getLangDefinitions(),
+                                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
+                                        public void onSuccess(String filePath) {
+                                            playList.add(filePath);
+                                            listener.onSuccess(true);
+                                            play(playList, 0);
+                                        }
+
+                                        public void onFailure() {
+                                            listener.onFailure();
+                                        }
+                                    });
+                        }
+
+                        public void onFailure() {
+                        }
+                    });
+        } else {
+            runSpeechTask(id + "_" + cl.getCurrentSideType(), cl.getCurrentSideText(),
+                    cl.getCurrentSideLang(),
+                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
+                        public void onSuccess(String filePath) {
+                            listener.onSuccess(true);
+                            playList.add(filePath);
+                            play(playList, 0);
+                        }
+
+                        public void onFailure() {
+                            listener.onFailure();
+                        }
+                    });
+        }
+    }
+
+    // TODO: make a separate class for TTS?
+    private void runSpeechTask(String id, String text, String lang, RetrieveSpeechTask.OnPostExecuteListener<String> listener) {
+        RetrieveSpeechTask task = new RetrieveSpeechTask(getActivity());
+        task.setOnPostExecuteListener(listener);
+        task.execute(id, text, lang);
+    }
+
+    private void play(final Vector<String> playList, final int index) {
+        String filePath = playList.get(index);
+        Log.d("quizword", filePath);
         try {
             File file = new File(filePath);
             MediaPlayer mp = MediaPlayer.create(getActivity(), Uri.fromFile(file));
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
                     mp.release();
+                    if (index < playList.size() - 1) {
+                        play(playList, index + 1);
+                    }
                 }
-            });   
+            });
             mp.start();
         } catch (Exception e) {
             e.printStackTrace();

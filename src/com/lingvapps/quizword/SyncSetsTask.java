@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.widget.Toast;
 
 class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
@@ -106,7 +105,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
     private void fillCardSet(CardSet cardSet, JSONArray terms) throws JSONException {
         for (int i = 0; i < terms.length(); i++) {
             JSONObject obj = terms.getJSONObject(i);
-            cardSet.addCard(new Card(obj.getInt("id"), obj.getString("term"), obj.getString("definition")));
+            cardSet.addCard(new Card(cardSet, obj.getInt("id"), obj.getString("term"), obj.getString("definition")));
         }
     }
 

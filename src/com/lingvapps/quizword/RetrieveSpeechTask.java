@@ -11,7 +11,7 @@ class RetrieveSpeechTask extends BackgroundTask<String, String> {
 
     @Override
     protected void onPreExecute() {
-        
+
     }
 
     @Override
@@ -29,13 +29,15 @@ class RetrieveSpeechTask extends BackgroundTask<String, String> {
     }
 
     protected String doInBackground(String... params) {
-        String lang = params[0];
+        String id = params[0];
         String text = params[1];
-        String id = params[2];
+        String lang = params[2];
         try {
-            ByteArrayBuffer buf = GoogleHTTP.requestTTS(lang, text);
-            String fileName = "tts_" + lang + "_" + id + ".mp3";
-            CacheManager.cacheData(context, buf.toByteArray(), fileName);
+            String fileName = "tts_" + id + "_" + lang + ".mp3";
+            if (!CacheManager.cacheExists(context, fileName)) {
+                ByteArrayBuffer buf = GoogleHTTP.requestTTS(lang, text);
+                CacheManager.cacheData(context, buf.toByteArray(), fileName);
+            }
             return context.getCacheDir() + "/" + fileName;
         } catch (Exception e) {
             e.printStackTrace();
