@@ -77,6 +77,8 @@ public class MySetsActivity extends ListMenuActivity {
         CardSet set = (CardSet) l.getAdapter().getItem(position);
         intent.putExtra("set_id", set.getId());
         intent.putExtra("set_name", set.getName());
+        intent.putExtra("lang_terms", set.getLangTerms());
+        intent.putExtra("lang_definitions", set.getLangDefinitions());
         startActivity(intent);
     }
 

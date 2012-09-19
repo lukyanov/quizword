@@ -22,7 +22,7 @@ public class CardSet implements Iterable<Card> {
         this.cards = new ArrayList<Card>();
     }
     
-    public CardSet(Integer id, String name, String langTerms, String langDefinition, Integer termCounts) {
+    public CardSet(Integer id, String name, String langTerms, String langDefinitions, Integer termCount) {
         this.id = id;
         this.name = name;
         this.langTerms = langTerms;

@@ -11,3 +11,22 @@ Features:
 * Cards shuffling
 * Interactive animation
 * Works offline
+
+Version history:
+
+Version 1.1.0
+-------------
+* Added text-to-speech processing through Google Translate
+* Fixed synchronization process
+
+Version 1.0.0
+-------------
+
+* Access to your public and private sets
+* Access to your classes sets
+* Access to your favorite sets
+* Three flashcard view modes
+* Touch gestures
+* Cards shuffling
+* Interactive animation
+* Works offline

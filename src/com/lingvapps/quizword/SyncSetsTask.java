@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.Toast;
 
 class SyncSetsTask extends BackgroundTask<Integer, Boolean> {

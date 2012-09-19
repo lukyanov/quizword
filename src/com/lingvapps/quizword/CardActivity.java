@@ -8,8 +8,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class CardActivity extends FragmentActivity {
-    
-    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,9 +20,13 @@ public class CardActivity extends FragmentActivity {
         setContentView(R.layout.card_activity);
 
         if (savedInstanceState == null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager()
+                    .beginTransaction();
             Bundle args = getIntent().getExtras();
-            CardFragment fragment = CardFragment.newInstance(args.getInt("set_id"), args.getString("set_name"), args.getString("lang_terms"), args.getString("lang_definitions"));
+            CardFragment fragment = CardFragment.newInstance(
+                    args.getInt("set_id"), args.getString("set_name"),
+                    args.getString("lang_terms"),
+                    args.getString("lang_definitions"));
             ft.add(R.id.frame_for_card_fragment, fragment, "card_fragment");
             ft.commit();
         }

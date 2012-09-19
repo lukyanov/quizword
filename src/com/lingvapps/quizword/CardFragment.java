@@ -1,5 +1,9 @@
 package com.lingvapps.quizword;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+
 import de.marcreichelt.android.RealViewSwitcher;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,18 +11,25 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +42,7 @@ public class CardFragment extends Fragment {
     private CardSet cardSet = null;
 
     private ShakeListener shaker;
-    
+
     static CardFragment newInstance(Integer setId, String setName, String langTerms, String langDefinitions) {
         CardFragment f = new CardFragment();
 
@@ -57,6 +68,7 @@ public class CardFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
+            Log.d("quizword", args.getString("lang_terms"));
             cardSet = new CardSet(args.getInt("set_id"), args.getString("set_name"),
                     args.getString("lang_terms"), args.getString("lang_definitions"));
             readCards();
@@ -130,6 +142,13 @@ public class CardFragment extends Fragment {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getActivity().onBackPressed();
+            }
+        });
+
+        Button buttonSpeech = (Button) view.findViewById(R.id.speech_button);
+        buttonSpeech.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                say();
             }
         });
     }
@@ -304,6 +323,48 @@ public class CardFragment extends Fragment {
         String i = Integer.valueOf(currentCard + 1).toString();
         String n = Integer.valueOf(cardSet.size()).toString();
         text.setText(i + "/" + n);
+    }
+
+    private void say() {
+        final Button button = (Button) getRootView().findViewById(R.id.speech_button);
+        final ProgressBar bar = new ProgressBar(getActivity());
+        final RelativeLayout parent = (RelativeLayout) button.getParent();
+        final int index = parent.indexOfChild(button);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) button.getLayoutParams();
+        bar.setLayoutParams(params);
+
+        parent.removeView(button);
+        parent.addView(bar, index);
+
+        RetrieveSpeechTask task = new RetrieveSpeechTask(getActivity());
+        task.setOnPostExecuteListener(new RetrieveSpeechTask.OnPostExecuteListener<String>() {
+            public void onSuccess(String filePath) {
+                parent.removeView(bar);
+                parent.addView(button, index);
+                playFile(filePath);
+            }
+            public void onFailure() {
+                parent.removeView(bar);
+                parent.addView(button, index);
+            }
+        });
+        task.execute(cardSet.getLangTerms(), "test", "1");
+    }
+
+    private void playFile(String filePath) {
+        try {
+            File file = new File(filePath);
+            MediaPlayer mp = MediaPlayer.create(getActivity(), Uri.fromFile(file));
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+                }
+            });   
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
