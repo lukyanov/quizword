@@ -9,6 +9,8 @@ import android.net.Uri;
 
 public class TextToSpeech {
 
+    static private MediaPlayer mediaPlayer = null;
+
     public interface OnCompletionListener {
         void onSuccess();
 
@@ -40,7 +42,7 @@ public class TextToSpeech {
             public void onSuccess(String filePath) {
                 playList.add(filePath);
                 runSpeechTask(context, id + "_definition",
-                        card.getDefinition(), cardSet.getLangDefinitions(),
+                        stripBrackets(card.getDefinition()), cardSet.getLangDefinitions(),
                         singleListener);
             }
 
@@ -50,11 +52,11 @@ public class TextToSpeech {
         };
 
         if (mode == CardLayout.MODE_SINGLE_SIDE) {
-            runSpeechTask(context, id + "_term", card.getTerm(),
+            runSpeechTask(context, id + "_term", stripBrackets(card.getTerm()),
                     cardSet.getLangTerms(), doubleListener);
         } else {
             runSpeechTask(context, id + "_" + cardLayout.getCurrentSideType(),
-                    cardLayout.getCurrentSideText(),
+                    stripBrackets(cardLayout.getCurrentSideText()),
                     cardLayout.getCurrentSideLang(), singleListener);
         }
     }
@@ -72,18 +74,25 @@ public class TextToSpeech {
         String filePath = playList.get(index);
         try {
             File file = new File(filePath);
-            MediaPlayer mp = MediaPlayer.create(context, Uri.fromFile(file));
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    if (index < playList.size() - 1) {
-                        play(context, playList, index + 1);
+            if (mediaPlayer == null || !mediaPlayer.isPlaying()) {
+                mediaPlayer = MediaPlayer.create(context, Uri.fromFile(file));
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.release();
+                        mediaPlayer = null;
+                        if (index < playList.size() - 1) {
+                            play(context, playList, index + 1);
+                        }
                     }
-                }
-            });
-            mp.start();
+                });
+                mediaPlayer.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static private String stripBrackets(String text) {
+        return text.replaceAll("\\([^\\(\\)]*\\)", "");
     }
 }
