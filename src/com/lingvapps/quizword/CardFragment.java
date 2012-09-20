@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.LayoutInflater;
@@ -61,7 +60,6 @@ public class CardFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            Log.d("quizword", args.getString("lang_terms"));
             cardSet = new CardSet(args.getInt("set_id"),
                     args.getString("set_name"), args.getString("lang_terms"),
                     args.getString("lang_definitions"));
