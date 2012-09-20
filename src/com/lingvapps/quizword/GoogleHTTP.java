@@ -19,7 +19,7 @@ public class GoogleHTTP {
 
     public static ByteArrayBuffer requestTTS(String lang, String text) {
         try {
-            String URL = BASE_URL + "/translate_tts?tl=" + URLEncoder.encode(lang, "UTF-8") + "&q=" + URLEncoder.encode(text, "UTF-8");
+            String URL = BASE_URL + "/translate_tts?ie=UTF-8&tl=" + URLEncoder.encode(lang, "UTF-8") + "&q=" + URLEncoder.encode(text, "UTF-8");
             Log.d("google", URL);
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(URL);
