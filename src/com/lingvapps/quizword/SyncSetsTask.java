@@ -91,8 +91,8 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
             JSONArray ss = group.getJSONArray("sets");
             for (int j = 0; j < ss.length(); j++) {
                 JSONObject obj = ss.getJSONObject(j);
-                cardSet = createCardSet(obj);
                 JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
+                cardSet = createCardSet(setData);
                 fillCardSet(cardSet, setData.getJSONArray("terms"));
                 storeSetToDatabase(db, cardSet, null, 1, null);
             }
