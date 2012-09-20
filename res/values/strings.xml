@@ -21,6 +21,8 @@
     <string name="authorizing_message">Authorizing&#8230;</string>
     <string name="synced_message">Synced</string>
     <string name="shuffled_message">Shuffled</string>
+
+    <string name="no_connection">No Internet connection</string>
     
     <string name="ok">OK</string>
     

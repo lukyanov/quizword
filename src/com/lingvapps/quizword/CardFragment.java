@@ -342,6 +342,7 @@ public class CardFragment extends Fragment {
             public void onFailure() {
                 parent.removeView(bar);
                 parent.addView(button, index);
+                Toast.makeText(getActivity(), R.string.no_connection, Toast.LENGTH_LONG).show();
             }
         });
     }
