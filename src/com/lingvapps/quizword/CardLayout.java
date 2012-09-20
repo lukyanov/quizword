@@ -134,6 +134,10 @@ public class CardLayout extends FrameLayout {
         return currentSideType;
     }
     
+    public Card getCard() {
+        return card;
+    }
+    
     private void setTermSide() {
         currentSideType = "term";
         currentSideText = card.getTerm();

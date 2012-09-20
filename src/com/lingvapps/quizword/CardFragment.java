@@ -1,8 +1,5 @@
 package com.lingvapps.quizword;
 
-import java.io.File;
-import java.util.Vector;
-
 import de.marcreichelt.android.RealViewSwitcher;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,8 +7,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -335,9 +330,11 @@ public class CardFragment extends Fragment {
 
         parent.removeView(button);
         parent.addView(bar, index);
+        
+        CardLayout cardLayout = (CardLayout) getSwitcher().getChildAt(currentCard);
 
-        runSpeechTasks(new RetrieveSpeechTask.OnPostExecuteListener<Boolean>() {
-            public void onSuccess(Boolean result) {
+        TextToSpeech.utterCard(getActivity(), cardLayout, currentMode, new TextToSpeech.OnCompletionListener() {
+            public void onSuccess() {
                 parent.removeView(bar);
                 parent.addView(button, index);
             }
@@ -347,83 +344,6 @@ public class CardFragment extends Fragment {
                 parent.addView(button, index);
             }
         });
-    }
-
-    private void runSpeechTasks(
-            final RetrieveSpeechTask.OnPostExecuteListener<Boolean> listener) {
-
-        final Card card = cardSet.getCard(currentCard);
-        final CardLayout cl = (CardLayout) getSwitcher().getChildAt(currentCard);
-        final String id = card.getId().toString();
-        final Vector<String> playList = new Vector<String>();
-
-        if (currentMode == CardLayout.MODE_SINGLE_SIDE) {
-            runSpeechTask(id + "_term", card.getTerm(), cardSet.getLangTerms(),
-                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
-                        public void onSuccess(String filePath) {
-                            playList.add(filePath);
-                            runSpeechTask(
-                                    id + "_definition",
-                                    card.getDefinition(),
-                                    cardSet.getLangDefinitions(),
-                                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
-                                        public void onSuccess(String filePath) {
-                                            playList.add(filePath);
-                                            listener.onSuccess(true);
-                                            play(playList, 0);
-                                        }
-
-                                        public void onFailure() {
-                                            listener.onFailure();
-                                        }
-                                    });
-                        }
-
-                        public void onFailure() {
-                        }
-                    });
-        } else {
-            runSpeechTask(id + "_" + cl.getCurrentSideType(), cl.getCurrentSideText(),
-                    cl.getCurrentSideLang(),
-                    new RetrieveSpeechTask.OnPostExecuteListener<String>() {
-                        public void onSuccess(String filePath) {
-                            listener.onSuccess(true);
-                            playList.add(filePath);
-                            play(playList, 0);
-                        }
-
-                        public void onFailure() {
-                            listener.onFailure();
-                        }
-                    });
-        }
-    }
-
-    // TODO: make a separate class for TTS?
-    private void runSpeechTask(String id, String text, String lang, RetrieveSpeechTask.OnPostExecuteListener<String> listener) {
-        RetrieveSpeechTask task = new RetrieveSpeechTask(getActivity());
-        task.setOnPostExecuteListener(listener);
-        task.execute(id, text, lang);
-    }
-
-    private void play(final Vector<String> playList, final int index) {
-        String filePath = playList.get(index);
-        Log.d("quizword", filePath);
-        try {
-            File file = new File(filePath);
-            MediaPlayer mp = MediaPlayer.create(getActivity(), Uri.fromFile(file));
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    if (index < playList.size() - 1) {
-                        play(playList, index + 1);
-                    }
-                }
-            });
-            mp.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
