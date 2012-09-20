@@ -11,10 +11,6 @@ public class CacheManager {
 
     private static final long MAX_SIZE = 1048576L; // 1MB
 
-    private CacheManager() {
-
-    }
-
     public static void cacheData(Context context, byte[] data, String name)
             throws IOException {
 
@@ -62,6 +58,13 @@ public class CacheManager {
         }
 
         return data;
+    }
+    
+    public static void clearCache(Context context) {
+        File[] files = context.getCacheDir().listFiles();
+        for (File file : files) {
+            file.delete();
+        }
     }
 
     private static void cleanDir(File dir, long bytes) {

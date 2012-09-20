@@ -23,6 +23,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         String token = prefs.getUserData("access_token");
         LocalStorageHelper storageHelper = new LocalStorageHelper(context);
         SQLiteDatabase db = storageHelper.getWritableDatabase();
+        CacheManager.clearCache(context);
         try {
             switch (selectionType) {
             case Preferences.SELECTION_MY_SETS:

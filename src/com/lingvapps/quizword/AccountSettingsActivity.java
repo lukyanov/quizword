@@ -128,11 +128,13 @@ public class AccountSettingsActivity extends ListMenuActivity {
     }
     
     protected void logout() {
+        // TODO: move deletion to Utils?
         Preferences prefs = Preferences.getInstance(this);
         prefs.clearUserData();
         prefs.clearDataSyncedFlagAll();
         LocalStorageHelper storageHelper = new LocalStorageHelper(this.getApplicationContext());
         storageHelper.clear_all();
+        CacheManager.clearCache(this);
         drawMenuList();
     }
     
