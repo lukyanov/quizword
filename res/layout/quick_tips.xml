@@ -35,11 +35,11 @@
 
                 <ImageView
                     style="@style/QuickTipsImage"
-                    android:src="@drawable/navigation_back" />
+                    android:src="@drawable/speech" />
 
                 <TextView
                     style="@style/QuickTipsText"
-                    android:text="Exit card mode" />
+                    android:text="Listen to words" />
             </LinearLayout>
 
             <LinearLayout
