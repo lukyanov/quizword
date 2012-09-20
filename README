@@ -10,18 +10,28 @@ Features:
 * Touch gestures
 * Cards shuffling
 * Interactive animation
+* Text-to-speech processing by Google Translate
 * Works offline
 
-Version history:
+Powered by Quizlet.com
+Text-to-speech processing powered by Google Translate
+
+
+
+Version History
+===============
 
 Version 1.1.0
 -------------
 * Added text-to-speech processing through Google Translate
 * Fixed synchronization process
 
+Version 1.0.2
+-------------
+* Added "Powered by Quzlet.com" labels in menus
+
 Version 1.0.0
 -------------
-
 * Access to your public and private sets
 * Access to your classes sets
 * Access to your favorite sets
