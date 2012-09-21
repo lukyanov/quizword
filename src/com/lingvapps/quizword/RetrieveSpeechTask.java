@@ -1,5 +1,7 @@
 package com.lingvapps.quizword;
 
+import java.io.File;
+
 import org.apache.http.util.ByteArrayBuffer;
 import android.content.Context;
 
@@ -34,11 +36,12 @@ class RetrieveSpeechTask extends BackgroundTask<String, String> {
         String lang = params[2];
         try {
             String fileName = "tts_" + id + "_" + lang + ".mp3";
+            String filePath = context.getCacheDir() + "/" + fileName;
             if (!CacheManager.cacheExists(context, fileName)) {
                 ByteArrayBuffer buf = GoogleHTTP.requestTTS(lang, text);
                 CacheManager.cacheData(context, buf.toByteArray(), fileName);
             }
-            return context.getCacheDir() + "/" + fileName;
+            return filePath;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

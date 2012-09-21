@@ -22,6 +22,7 @@ class RetrieveSetTask extends BackgroundTask<CardSet, CardSet> {
             while (cursor.moveToNext()) {
                 set.addCard(new Card(set, cursor.getInt(0), cursor.getString(1), cursor.getString(2)));
             }
+            cursor.close();
             db.close();
             return set;
         } catch (Exception e) {

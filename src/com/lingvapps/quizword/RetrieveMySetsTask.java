@@ -37,6 +37,7 @@ class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> 
                         cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4));
                 i++;
             }
+            cursor.close();
             db.close();
             return new ArrayAdapter<CardSet>(context,
                     android.R.layout.simple_list_item_1,

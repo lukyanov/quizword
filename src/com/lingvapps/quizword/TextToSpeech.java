@@ -73,9 +73,9 @@ public class TextToSpeech {
             final Vector<String> playList, final int index) {
         String filePath = playList.get(index);
         try {
-            File file = new File(filePath);
             if (mediaPlayer == null || !mediaPlayer.isPlaying()) {
-                mediaPlayer = MediaPlayer.create(context, Uri.fromFile(file));
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setDataSource(filePath);
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     public void onCompletion(MediaPlayer mp) {
                         mp.release();
@@ -85,6 +85,7 @@ public class TextToSpeech {
                         }
                     }
                 });
+                mediaPlayer.prepare();
                 mediaPlayer.start();
             }
         } catch (Exception e) {
