@@ -27,22 +27,22 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         try {
             switch (selectionType) {
             case Preferences.SELECTION_MY_SETS:
-                storageHelper.clear_my_sets();
+                storageHelper.clear_my_sets(db);
                 syncMySets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
             case Preferences.SELECTION_MY_CLASSES_SETS:
-                storageHelper.clear_my_classes_sets();
+                storageHelper.clear_my_classes_sets(db);
                 syncClassesSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
             case Preferences.SELECTION_FAVORITE_SETS:
-                storageHelper.clear_favorites();
+                storageHelper.clear_favorites(db);
                 syncFavoriteSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
             default:
-                storageHelper.clear_all();
+                storageHelper.clear_all(db);
                 syncMySets(db, user, token);
                 syncClassesSets(db, user, token);
                 syncFavoriteSets(db, user, token);

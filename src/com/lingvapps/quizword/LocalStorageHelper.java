@@ -70,24 +70,26 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     
     public void clear_all() {
         SQLiteDatabase db = getWritableDatabase();
+        clear_all(db);
+        db.close();
+    }
+    
+    public void clear_all(SQLiteDatabase db) {
         db.delete(CARD_TABLE_NAME, null, null);
         db.delete(SET_TABLE_NAME, null, null);
     }
 
-    public void clear_my_sets() {
-        SQLiteDatabase db = getWritableDatabase();
+    public void clear_my_sets(SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON");
         db.delete(SET_TABLE_NAME, "is_my = 1 AND is_in_class = 0 AND is_favorite = 0", null);
     }
 
-    public void clear_my_classes_sets() {
-        SQLiteDatabase db = getWritableDatabase();
+    public void clear_my_classes_sets(SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON");
         db.delete(SET_TABLE_NAME, "is_my = 0 AND is_in_class = 1 AND is_favorite = 0", null);
     }
 
-    public void clear_favorites() {
-        SQLiteDatabase db = getWritableDatabase();
+    public void clear_favorites(SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON");
         db.delete(SET_TABLE_NAME, "is_my = 0 AND is_in_class = 0 AND is_favorite = 1", null);
     }
