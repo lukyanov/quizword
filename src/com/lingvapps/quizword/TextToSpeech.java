@@ -58,6 +58,13 @@ public class TextToSpeech {
                     cardLayout.getCurrentSideLang(), singleListener);
         }
     }
+    
+    static public void releasePlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
 
     static private void runSpeechTask(Context context, String id, String text,
             String lang,
@@ -73,15 +80,17 @@ public class TextToSpeech {
         try {
             if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
-                mediaPlayer.setDataSource(filePath);
-            } else if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
             }
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }
+            } catch (Exception e) { }
+            mediaPlayer.setDataSource(filePath);
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    mediaPlayer = null;
+                    mp.reset();
                     if (index < playList.size() - 1) {
                         play(context, playList, index + 1);
                     }

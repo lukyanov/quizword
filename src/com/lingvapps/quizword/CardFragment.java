@@ -83,7 +83,15 @@ public class CardFragment extends Fragment {
     @Override
     public void onPause() {
         shaker.pause();
+        TextToSpeech.releasePlayer();
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        shaker.pause();
+        TextToSpeech.releasePlayer();
+        super.onStop();
     }
 
     @Override
