@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -27,11 +29,11 @@ public class CacheManager {
         }
 
         File file = new File(cacheDir, name);
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             file.setReadable(true, false);
         }
-        
+
         FileOutputStream os = new FileOutputStream(file);
         try {
             os.write(data);
@@ -83,6 +85,11 @@ public class CacheManager {
 
         long bytesDeleted = 0;
         File[] files = dir.listFiles();
+        Arrays.sort(files, new Comparator<File>() {
+            public int compare(File f1, File f2) {
+                return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+            }
+        });
 
         for (File file : files) {
             bytesDeleted += file.length();
@@ -111,9 +118,10 @@ public class CacheManager {
     public static int chmod(File path, int mode) {
         try {
             Class<?> fileUtils = Class.forName("android.os.FileUtils");
-            Method setPermissions =
-                    fileUtils.getMethod("setPermissions", String.class, int.class, int.class, int.class);
-            return (Integer) setPermissions.invoke(null, path.getAbsolutePath(), mode, -1, -1);
+            Method setPermissions = fileUtils.getMethod("setPermissions",
+                    String.class, int.class, int.class, int.class);
+            return (Integer) setPermissions.invoke(null,
+                    path.getAbsolutePath(), mode, -1, -1);
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
