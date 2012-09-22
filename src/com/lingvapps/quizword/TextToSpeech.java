@@ -1,11 +1,9 @@
 package com.lingvapps.quizword;
 
-import java.io.File;
 import java.util.Vector;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.net.Uri;
 
 public class TextToSpeech {
 
@@ -73,21 +71,24 @@ public class TextToSpeech {
             final Vector<String> playList, final int index) {
         String filePath = playList.get(index);
         try {
-            if (mediaPlayer == null || !mediaPlayer.isPlaying()) {
+            if (mediaPlayer == null) {
                 mediaPlayer = new MediaPlayer();
                 mediaPlayer.setDataSource(filePath);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.release();
-                        mediaPlayer = null;
-                        if (index < playList.size() - 1) {
-                            play(context, playList, index + 1);
-                        }
-                    }
-                });
-                mediaPlayer.prepare();
-                mediaPlayer.start();
+            } else if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
             }
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+                    mediaPlayer = null;
+                    if (index < playList.size() - 1) {
+                        play(context, playList, index + 1);
+                    }
+                }
+            });
+            mediaPlayer.prepare();
+            mediaPlayer.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
