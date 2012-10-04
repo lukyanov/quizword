@@ -26,7 +26,7 @@ Version 1.2.0
 * Improved touch experience
 * Decreased memory usage
 * Improved TTS playing
-* Fixed caching TTS mechanism
+* Fixed TTS caching mechanism
 
 Version 1.1.0
 -------------
