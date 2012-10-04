@@ -21,6 +21,13 @@ Text-to-speech processing powered by Google Translate
 Version History
 ===============
 
+Version 1.2.0
+-------------
+* Improved touch experience
+* Decreased memory usage
+* Improved TTS playing
+* Fixed caching TTS mechanism
+
 Version 1.1.0
 -------------
 * Added text-to-speech processing through Google Translate

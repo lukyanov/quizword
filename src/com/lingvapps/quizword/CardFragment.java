@@ -1,6 +1,5 @@
 package com.lingvapps.quizword;
 
-import de.marcreichelt.android.RealViewSwitcher;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -102,9 +101,8 @@ public class CardFragment extends Fragment {
         }
 
         View view = inflater.inflate(R.layout.card_fragment, container, false);
-        ViewSwitcher switcher = (ViewSwitcher) view
-                .findViewById(R.id.view_switcher);
-        fillViewSwitcher(switcher, inflater);
+        CardPager pager = (CardPager) view.findViewById(R.id.card_pager);
+        initCardPager(pager);
         view.setBackgroundColor(Color.BLACK);
 
         updateModeButtonBackground(view);
@@ -175,21 +173,12 @@ public class CardFragment extends Fragment {
         });
     }
 
-    private void fillViewSwitcher(ViewSwitcher view) {
-        LayoutInflater inflater = (LayoutInflater) getActivity()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        fillViewSwitcher(view, inflater);
-    }
-
-    private void fillViewSwitcher(ViewSwitcher view, LayoutInflater inflater) {
-        view.removeAllViews();
-        for (Card card : cardSet) {
-            CardLayout layout = new CardLayout(this.getActivity(), card, currentMode);
-            view.addView(layout);
-        }
-
-        view.setCurrentScreen(currentCard);
-        view.setOnScreenSwitchListener(onScreenSwitchListener);
+    private void initCardPager(CardPager pager) {
+        pager.setMode(currentMode);
+        pager.setCardSet(cardSet);
+        pager.reinit();
+        pager.setCurrentCard(currentCard);
+        pager.setOnPageChangeListener(onPageChangeListener);
     }
 
     public void shuffleCards() {
@@ -201,7 +190,7 @@ public class CardFragment extends Fragment {
             turnEffect();
         } else {
             currentCard = 0;
-            fillViewSwitcher(getSwitcher());
+            initCardPager(getPager());
             updateCounterText(getRootView());
             Toast.makeText(getActivity(), R.string.shuffled_message,
                     Toast.LENGTH_LONG).show();
@@ -210,8 +199,7 @@ public class CardFragment extends Fragment {
 
     @TargetApi(11)
     public void turnEffect() {
-        final CardLayout view = (CardLayout) getSwitcher().getChildAt(
-                currentCard);
+        final CardLayout view = getPager().getCurrentCard();
 
         ObjectAnimator animFirst = ObjectAnimator.ofFloat(view, "rotation",
                 0.0f, 540.0f);
@@ -227,7 +215,7 @@ public class CardFragment extends Fragment {
         animSecond.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator anim) {
-                fillViewSwitcher(getSwitcher());
+                initCardPager(getPager());
                 updateCounterText(getRootView());
             }
         });
@@ -270,7 +258,7 @@ public class CardFragment extends Fragment {
         }
 
         updateModeButtonBackground(getRootView());
-        fillViewSwitcher(getSwitcher());
+        initCardPager(getPager());
     }
 
     private void updateModeButtonBackground(View view) {
@@ -293,8 +281,8 @@ public class CardFragment extends Fragment {
         return (ViewGroup) frame.getChildAt(0);
     }
 
-    private ViewSwitcher getSwitcher() {
-        return (ViewSwitcher) getRootView().getChildAt(0);
+    private CardPager getPager() {
+        return (CardPager) getRootView().getChildAt(0);
     }
 
     private void readCards() {
@@ -337,7 +325,7 @@ public class CardFragment extends Fragment {
         parent.removeView(button);
         parent.addView(bar, index);
         
-        CardLayout cardLayout = (CardLayout) getSwitcher().getChildAt(currentCard);
+        CardLayout cardLayout = getPager().getCurrentCard();
 
         TextToSpeech.utterCard(getActivity(), cardLayout, currentMode, new TextToSpeech.OnCompletionListener() {
             public void onSuccess() {
@@ -353,9 +341,14 @@ public class CardFragment extends Fragment {
         });
     }
 
-    private final RealViewSwitcher.OnScreenSwitchListener onScreenSwitchListener = new RealViewSwitcher.OnScreenSwitchListener() {
-        public void onScreenSwitched(int screen) {
-            currentCard = screen;
+    private final CardPager.OnPageChangeListener onPageChangeListener = new CardPager.OnPageChangeListener() {
+
+        public void onPageScrollStateChanged(int arg0) { }
+
+        public void onPageScrolled(int arg0, float arg1, int arg2) { }
+
+        public void onPageSelected(int position) {
+            currentCard = position;
             updateCounterText(getRootView());
         }
 

@@ -2,13 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-    <com.lingvapps.quizword.ViewSwitcher
-        android:id="@+id/view_switcher"
+    
+     <com.lingvapps.quizword.CardPager
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </com.lingvapps.quizword.ViewSwitcher>
-
+        android:layout_height="match_parent"
+        android:id="@+id/card_pager" />
+    
     <Button
         android:id="@+id/navigation_back"
         style="?android:attr/buttonStyleSmall"
