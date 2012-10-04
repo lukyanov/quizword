@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lingvapps.quizword.R;
+import com.lingvapps.quizword.renew.R;
 
 import android.content.ContentValues;
 import android.content.Context;

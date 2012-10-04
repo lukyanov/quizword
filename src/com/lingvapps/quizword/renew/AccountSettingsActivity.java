@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 
 import org.json.JSONObject;
 
-import com.lingvapps.quizword.R;
+import com.lingvapps.quizword.renew.R;
 
 import android.net.Uri;
 import android.os.Bundle;

@@ -8,7 +8,7 @@ emulator-old:
 
 run: debug
 	ant debug install
-	adb shell am start com.lingvapps.quizword/.MainMenuActivity
+	adb shell am start com.lingvapps.quizword.renew/.MainMenuActivity
 
 clean:
 	ant clean
