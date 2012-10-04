@@ -1,4 +1,4 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
 
 import java.util.ArrayList;
 import java.util.Collections;

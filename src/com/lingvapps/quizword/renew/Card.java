@@ -1,4 +1,4 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
 
 public class Card {
     private CardSet parentCardSet;

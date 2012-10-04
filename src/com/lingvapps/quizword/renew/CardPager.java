@@ -1,4 +1,4 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -19,7 +19,7 @@ public class CardPager extends ViewPager {
         super(context, attrs);
         this.context = context;
         
-        this.setPageMargin(10);
+        this.setPageMargin(0);
         
         cardPagerAdapter = new CardPagerAdapter();
         reinit();

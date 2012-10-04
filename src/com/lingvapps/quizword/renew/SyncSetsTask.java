@@ -1,8 +1,10 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.lingvapps.quizword.R;
 
 import android.content.ContentValues;
 import android.content.Context;

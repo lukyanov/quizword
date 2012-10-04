@@ -1,4 +1,6 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
+
+import com.lingvapps.quizword.R;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;

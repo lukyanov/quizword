@@ -1,4 +1,6 @@
-package com.lingvapps.quizword;
+package com.lingvapps.quizword.renew;
+
+import com.lingvapps.quizword.R;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
