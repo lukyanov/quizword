@@ -1,5 +1,6 @@
 package com.lingvapps.quizword.renew;
 
+import java.io.FileInputStream;
 import java.util.Vector;
 
 import android.content.Context;
@@ -87,7 +88,8 @@ public class TextToSpeech {
                     mediaPlayer.reset();
                 }
             } catch (Exception e) { }
-            mediaPlayer.setDataSource(filePath);
+            FileInputStream fileInputStream = new FileInputStream(filePath);
+            mediaPlayer.setDataSource(fileInputStream.getFD()); 
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
                     mp.reset();

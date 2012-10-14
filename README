@@ -21,6 +21,10 @@ Text-to-speech processing powered by Google Translate
 Version History
 ===============
 
+Version 1.2.1
+-------------
+* Fixed TTS sound playing for Samsung Galaxy SIII
+
 Version 1.2.0
 -------------
 * Improved touch experience
