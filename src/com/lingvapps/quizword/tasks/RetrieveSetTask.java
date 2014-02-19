@@ -1,11 +1,15 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.tasks;
 
+
+import com.lingvapps.quizword.core.Card;
+import com.lingvapps.quizword.core.CardSet;
+import com.lingvapps.quizword.utils.LocalStorageHelper;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-class RetrieveSetTask extends BackgroundTask<CardSet, CardSet> {
+public class RetrieveSetTask extends BackgroundTask<CardSet, CardSet> {
 
     public RetrieveSetTask(Context ctx) {
         super(ctx);

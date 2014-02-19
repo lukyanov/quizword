@@ -1,17 +1,24 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.tasks;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lingvapps.quizword.core.Card;
+import com.lingvapps.quizword.core.CardSet;
 import com.lingvapps.quizword.renew.R;
+import com.lingvapps.quizword.renew.R.string;
+import com.lingvapps.quizword.utils.CacheManager;
+import com.lingvapps.quizword.utils.LocalStorageHelper;
+import com.lingvapps.quizword.utils.Preferences;
+import com.lingvapps.quizword.utils.QuizletHTTP;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
+public class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
 
     public SyncSetsTask(Context ctx) {
         super(ctx);

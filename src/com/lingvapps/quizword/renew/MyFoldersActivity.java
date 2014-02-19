@@ -1,6 +1,10 @@
 package com.lingvapps.quizword.renew;
 
+import com.lingvapps.quizword.core.Folder;
 import com.lingvapps.quizword.renew.R;
+import com.lingvapps.quizword.tasks.RetrieveMyFoldersTask;
+import com.lingvapps.quizword.tasks.SyncSetsTask;
+import com.lingvapps.quizword.utils.Preferences;
 
 import android.os.Bundle;
 import android.content.Intent;

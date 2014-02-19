@@ -1,4 +1,4 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

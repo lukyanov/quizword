@@ -1,5 +1,8 @@
 package com.lingvapps.quizword.renew;
 
+import com.lingvapps.quizword.core.Card;
+import com.lingvapps.quizword.core.CardSet;
+
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;

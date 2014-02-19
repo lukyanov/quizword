@@ -1,11 +1,13 @@
-package com.lingvapps.quizword.renew;
-
-import java.io.File;
+package com.lingvapps.quizword.tasks;
 
 import org.apache.http.util.ByteArrayBuffer;
+
+import com.lingvapps.quizword.utils.CacheManager;
+import com.lingvapps.quizword.utils.GoogleHTTP;
+
 import android.content.Context;
 
-class RetrieveSpeechTask extends BackgroundTask<String, String> {
+public class RetrieveSpeechTask extends BackgroundTask<String, String> {
 
     public RetrieveSpeechTask(Context ctx) {
         super(ctx);

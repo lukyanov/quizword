@@ -1,7 +1,8 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.tasks;
 
 
 import com.lingvapps.quizword.renew.R;
+import com.lingvapps.quizword.renew.R.string;
 
 import android.app.ProgressDialog;
 import android.content.Context;

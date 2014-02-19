@@ -1,4 +1,4 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.utils;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

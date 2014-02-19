@@ -1,13 +1,16 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.lingvapps.quizword.utils.Preferences;
+import com.lingvapps.quizword.utils.QuizletHTTP;
+
 import android.content.Context;
 
-class RetrieveAccessTokenTask extends BackgroundTask<String, JSONObject> {
+public class RetrieveAccessTokenTask extends BackgroundTask<String, JSONObject> {
 
     public RetrieveAccessTokenTask(Context ctx) {
         super(ctx);

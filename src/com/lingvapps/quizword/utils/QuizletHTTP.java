@@ -1,4 +1,4 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,8 +29,8 @@ public class QuizletHTTP {
     
     private static final String BASE_URL = "https://quizlet.com";
     private static final String API_BASE_URL = "https://api.quizlet.com";
-    private static final String CLIENT_ID = "t3UUt7Hqcj";
-    private static final String SECRET_KEY = "Rg-llxpzqmgYBCUsDiIp8w";
+    private static final String CLIENT_ID = "CLIENT_ID";
+    private static final String SECRET_KEY = "SECRET_KEY";
 
     public static String getAuthorizitionURL(String scope, String state,
             String redirectURI) {

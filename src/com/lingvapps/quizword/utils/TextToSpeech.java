@@ -1,7 +1,12 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.utils;
 
 import java.io.FileInputStream;
 import java.util.Vector;
+
+import com.lingvapps.quizword.core.Card;
+import com.lingvapps.quizword.core.CardSet;
+import com.lingvapps.quizword.renew.CardLayout;
+import com.lingvapps.quizword.tasks.RetrieveSpeechTask;
 
 import android.content.Context;
 import android.media.MediaPlayer;

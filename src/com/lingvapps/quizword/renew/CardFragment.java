@@ -1,5 +1,11 @@
 package com.lingvapps.quizword.renew;
 
+import com.lingvapps.quizword.core.Card;
+import com.lingvapps.quizword.core.CardSet;
+import com.lingvapps.quizword.tasks.RetrieveSetTask;
+import com.lingvapps.quizword.utils.Preferences;
+import com.lingvapps.quizword.utils.ShakeListener;
+import com.lingvapps.quizword.utils.TextToSpeech;
 import com.lingvapps.quizword.renew.R;
 
 import android.animation.Animator;

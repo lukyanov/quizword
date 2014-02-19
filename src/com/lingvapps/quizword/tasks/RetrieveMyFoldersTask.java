@@ -1,11 +1,15 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.tasks;
+
+import com.lingvapps.quizword.core.Folder;
+import com.lingvapps.quizword.utils.LocalStorageHelper;
+import com.lingvapps.quizword.utils.Preferences;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.ArrayAdapter;
 
-class RetrieveMyFoldersTask extends BackgroundTask<Integer, ArrayAdapter<Folder>> {
+public class RetrieveMyFoldersTask extends BackgroundTask<Integer, ArrayAdapter<Folder>> {
 
     public RetrieveMyFoldersTask(Context ctx) {
         super(ctx);

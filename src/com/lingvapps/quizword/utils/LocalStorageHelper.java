@@ -1,4 +1,5 @@
-package com.lingvapps.quizword.renew;
+package com.lingvapps.quizword.utils;
+
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,7 +51,7 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
 
     private Context context;
 
-    LocalStorageHelper(Context context) {
+    public LocalStorageHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }

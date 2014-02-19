@@ -1,6 +1,7 @@
 package com.lingvapps.quizword.renew;
 
 import com.lingvapps.quizword.renew.R;
+import com.lingvapps.quizword.utils.Preferences;
 
 import android.content.Intent;
 import android.os.Bundle;

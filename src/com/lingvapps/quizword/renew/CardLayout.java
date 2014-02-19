@@ -1,5 +1,6 @@
 package com.lingvapps.quizword.renew;
 
+import com.lingvapps.quizword.core.Card;
 import com.lingvapps.quizword.renew.R;
 import com.mediaportal.ampdroid.controls.AutoResizeTextView;
 
