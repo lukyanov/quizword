@@ -7,8 +7,8 @@
     
     <string name="title_activity_card">Card</string>
     <string name="title_activity_account_settings">Account Settings</string>
-    <string name="title_activity_my_sets">My Sets</string>
-    <string name="title_activity_my_classes_sets">My Classes Sets</string>
+    <string name="title_activity_my_sets">My Sets</string><string name="title_activity_my_folders">My Folders</string>
+    <string name="title_activity_my_classes">My Classes</string>
     <string name="title_activity_favorite_sets">Favorite Sets</string>
     
     <string name="auth_error_title">Authorization Error</string>
@@ -28,9 +28,10 @@
     
     <string-array name="main_menu">
         <item>My Sets</item>
-        <item>My Classes Sets</item>
+        <item >My Folders</item><item>My Classes</item>
         <item>Favorite Sets</item>
         <item>Account Settings</item>
+        
     </string-array>
      
     <string-array name="settings_menu">
@@ -41,6 +42,7 @@
         <item>Logout</item>
         <item>Sync</item>
     </string-array>
+    
      
 </resources>
 

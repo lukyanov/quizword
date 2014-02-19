@@ -12,9 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MySetsActivity extends ListMenuActivity {
+public class MyFoldersActivity extends ListMenuActivity {
 
-    private int selectionType = Preferences.SELECTION_MY_SETS;
+    private int selectionType = Preferences.SELECTION_MY_FOLDERS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,27 +24,21 @@ public class MySetsActivity extends ListMenuActivity {
         Bundle params = getIntent().getExtras();
         selectionType = params.getInt("selectionType");
         switch (selectionType) {
-            case Preferences.SELECTION_MY_SETS:
-                titleId = R.string.title_activity_my_sets;
-                break;
             case Preferences.SELECTION_MY_FOLDERS:
                 titleId = R.string.title_activity_my_folders;
                 break;
             case Preferences.SELECTION_MY_CLASSES:
                 titleId = R.string.title_activity_my_classes;
                 break;
-            case Preferences.SELECTION_FAVORITE_SETS:
-                titleId = R.string.title_activity_favorite_sets;
-                break;
         }
         setTitle(titleId);
-        loadSets();
+        loadFolders();
     }
 
-    void loadSets() {
-        RetrieveMySetsTask task = new RetrieveMySetsTask(this);
-        task.setOnPostExecuteListener(new RetrieveMySetsTask.OnPostExecuteListener<ArrayAdapter<CardSet>>() {
-            public void onSuccess(ArrayAdapter<CardSet> adapter) {
+    void loadFolders() {
+        RetrieveMyFoldersTask task = new RetrieveMyFoldersTask(this);
+        task.setOnPostExecuteListener(new RetrieveMyFoldersTask.OnPostExecuteListener<ArrayAdapter<Folder>>() {
+            public void onSuccess(ArrayAdapter<Folder> adapter) {
                 Preferences prefs = Preferences
                         .getInstance(getApplicationContext());
                 if (prefs.isDataSynced(selectionType)) {
@@ -61,6 +55,7 @@ public class MySetsActivity extends ListMenuActivity {
         task.execute(selectionType);
     }
 
+    // TODO: move this to some base class
     protected void drawSyncMenu() {
         String item = getString(R.string.menu_sync);
         String[] values = new String[] { item };
@@ -78,20 +73,17 @@ public class MySetsActivity extends ListMenuActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent;
-        intent = new Intent(this, CardActivity.class);
-        CardSet set = (CardSet) l.getAdapter().getItem(position);
-        intent.putExtra("set_id", set.getId());
-        intent.putExtra("set_name", set.getName());
-        intent.putExtra("lang_terms", set.getLangTerms());
-        intent.putExtra("lang_definitions", set.getLangDefinitions());
+        intent = new Intent(this, MySetsActivity.class);
+        intent.putExtra("selectionType", selectionType);
         startActivity(intent);
     }
 
+    // TODO: move to base class
     protected void executeSyncTask() {
         SyncSetsTask task = new SyncSetsTask(this);
         task.setOnPostExecuteListener(new SyncSetsTask.OnPostExecuteListener<Boolean>() {
             public void onSuccess(Boolean result) {
-                loadSets();
+                loadFolders();
             }
 
             public void onFailure() {

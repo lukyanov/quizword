@@ -57,6 +57,14 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-    </application>
+        <activity
+            android:name=".MyFoldersActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_my_folders" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        </application>
 
 </manifest>

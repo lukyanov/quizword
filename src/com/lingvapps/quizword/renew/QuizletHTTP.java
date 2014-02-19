@@ -29,8 +29,8 @@ public class QuizletHTTP {
     
     private static final String BASE_URL = "https://quizlet.com";
     private static final String API_BASE_URL = "https://api.quizlet.com";
-    private static final String CLIENT_ID = "CLIENT_ID";
-    private static final String SECRET_KEY = "SECRET_KEY";
+    private static final String CLIENT_ID = "t3UUt7Hqcj";
+    private static final String SECRET_KEY = "Rg-llxpzqmgYBCUsDiIp8w";
 
     public static String getAuthorizitionURL(String scope, String state,
             String redirectURI) {
@@ -79,8 +79,8 @@ public class QuizletHTTP {
         return responseToJSONObject(response);
     }
 
-    public static JSONArray requestMyGroups(String token, String user) {
-        String response = request(API_BASE_URL + "/2.0/users/" + user + "/groups", token);
+    public static JSONArray requestMyClasses(String token, String user) {
+        String response = request(API_BASE_URL + "/2.0/users/" + user + "/classes", token);
         return responseToJSONArray(response);
     }
 

@@ -34,14 +34,23 @@ public class MainMenuActivity extends ListMenuActivity {
             break;
         case 1:
             if (prefs.getUserData("user_id") != null) {
-                intent = new Intent(this, MySetsActivity.class);
-                intent.putExtra("selectionType", Preferences.SELECTION_MY_CLASSES_SETS);
+                intent = new Intent(this, MyFoldersActivity.class);
+                intent.putExtra("selectionType", Preferences.SELECTION_MY_FOLDERS);
             } else {
                 intent = new Intent(this, AccountSettingsActivity.class);
             }
             startActivity(intent);
             break;
         case 2:
+            if (prefs.getUserData("user_id") != null) {
+                intent = new Intent(this, MyFoldersActivity.class);
+                intent.putExtra("selectionType", Preferences.SELECTION_MY_CLASSES);
+            } else {
+                intent = new Intent(this, AccountSettingsActivity.class);
+            }
+            startActivity(intent);
+            break;
+        case 3:
             if (prefs.getUserData("user_id") != null) {
                 intent = new Intent(this, MySetsActivity.class);
                 intent.putExtra("selectionType", Preferences.SELECTION_FAVORITE_SETS);
@@ -50,7 +59,7 @@ public class MainMenuActivity extends ListMenuActivity {
             }
             startActivity(intent);
             break;
-        case 3:
+        case 4:
             intent = new Intent(this, AccountSettingsActivity.class);
             startActivity(intent);
             break;

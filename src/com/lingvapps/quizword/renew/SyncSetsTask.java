@@ -29,27 +29,36 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         try {
             switch (selectionType) {
             case Preferences.SELECTION_MY_SETS:
-                storageHelper.clear_my_sets(db);
+                storageHelper.clear_sets(db, "my_sets");
                 syncMySets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
-            case Preferences.SELECTION_MY_CLASSES_SETS:
-                storageHelper.clear_my_classes_sets(db);
+/*            
+			case Preferences.SELECTION_MY_FOLDERS:
+                storageHelper.clear_sets(db, "my_folders");
+                syncFoldersSets(db, user, token);
+                prefs.setDataSyncedFlag(selectionType);
+                break;
+*/
+            case Preferences.SELECTION_MY_CLASSES:
+                storageHelper.clear_sets(db, "my_classes");
                 syncClassesSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
             case Preferences.SELECTION_FAVORITE_SETS:
-                storageHelper.clear_favorites(db);
+                storageHelper.clear_sets(db, "favorites");
                 syncFavoriteSets(db, user, token);
                 prefs.setDataSyncedFlag(selectionType);
                 break;
             default:
                 storageHelper.clear_all(db);
                 syncMySets(db, user, token);
+                //syncFoldersSets(db, user, token);
                 syncClassesSets(db, user, token);
                 syncFavoriteSets(db, user, token);
                 prefs.setDataSyncedFlag(Preferences.SELECTION_MY_SETS);
-                prefs.setDataSyncedFlag(Preferences.SELECTION_MY_CLASSES_SETS);
+                prefs.setDataSyncedFlag(Preferences.SELECTION_MY_FOLDERS);
+                prefs.setDataSyncedFlag(Preferences.SELECTION_MY_CLASSES);
                 prefs.setDataSyncedFlag(Preferences.SELECTION_FAVORITE_SETS);
             }
             
@@ -70,7 +79,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
             JSONObject obj = ss.getJSONObject(i);
             cardSet = createCardSet(obj);
             fillCardSet(cardSet, obj.getJSONArray("terms"));
-            storeSetToDatabase(db, cardSet, 1, null, null);
+            storeSetToDatabase(db, cardSet, "my_sets");
         }
     }
 
@@ -81,22 +90,22 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
             JSONObject obj = ss.getJSONObject(i);
             cardSet = createCardSet(obj);
             fillCardSet(cardSet, obj.getJSONArray("terms"));
-            storeSetToDatabase(db, cardSet, null, null, 1);
+            storeSetToDatabase(db, cardSet, "favorites");
         }
     }
 
     private void syncClassesSets(SQLiteDatabase db, String user, String token) throws JSONException {
         CardSet cardSet;
-        JSONArray groups = QuizletHTTP.requestMyGroups(token, user);
-        for (int i = 0; i < groups.length(); i++) {
-            JSONObject group = groups.getJSONObject(i);
+        JSONArray classes = QuizletHTTP.requestMyClasses(token, user);
+        for (int i = 0; i < classes.length(); i++) {
+            JSONObject group = classes.getJSONObject(i);
             JSONArray ss = group.getJSONArray("sets");
             for (int j = 0; j < ss.length(); j++) {
                 JSONObject obj = ss.getJSONObject(j);
                 JSONObject setData = QuizletHTTP.requestSet(token, obj.getInt("id"));
                 cardSet = createCardSet(setData);
                 fillCardSet(cardSet, setData.getJSONArray("terms"));
-                storeSetToDatabase(db, cardSet, null, 1, null);
+                storeSetToDatabase(db, cardSet, "my_classes");
             }
         }
     }
@@ -112,15 +121,10 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         }
     }
 
-    private void storeSetToDatabase(SQLiteDatabase db, CardSet cardSet, Integer isMy, Integer isInClass, Integer isFavorite) {
+    private void storeSetToDatabase(SQLiteDatabase db, CardSet cardSet, String bag) {
         ContentValues values = new ContentValues();
         values.put("id", cardSet.getId());
-        if (isMy != null)
-            values.put("is_my", isMy);
-        if (isInClass != null)
-            values.put("is_in_class", isInClass);
-        if (isFavorite != null)
-            values.put("is_favorite", isFavorite);
+        values.put("bag", bag);
 
         values.put("name", cardSet.getName());
         values.put("lang_terms", cardSet.getLangTerms());
@@ -130,12 +134,7 @@ class SyncSetsTask extends BackgroundTask<Integer, Boolean> {
         if (db.insert("sets", null, values) == -1) {
             // there already is such a set
             values = new ContentValues();
-            if (isMy != null)
-                values.put("is_my", isMy);
-            if (isInClass != null)
-                values.put("is_in_class", isInClass);
-            if (isFavorite != null)
-                values.put("is_favorite", isFavorite);
+            values.put("bag", bag);
             db.update("sets", values, "id = ?", new String[] { cardSet.getId().toString() });
         } else {
             for (Card card : cardSet) {

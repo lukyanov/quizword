@@ -20,13 +20,16 @@ class RetrieveMySetsTask extends BackgroundTask<Integer, ArrayAdapter<CardSet>> 
             String selection = "";
             switch (selectionId) {
             case Preferences.SELECTION_MY_SETS:
-                selection = "is_my = 1";
+                selection = "bag = 'my_sets'";
                 break;
-            case Preferences.SELECTION_MY_CLASSES_SETS:
-                selection = "is_in_class = 1";
+            case Preferences.SELECTION_MY_FOLDERS:
+                selection = "bag = 'my_folders'";
+                break;
+            case Preferences.SELECTION_MY_CLASSES:
+                selection = "bag = 'my_classes'";
                 break;
             case Preferences.SELECTION_FAVORITE_SETS:
-                selection = "is_favorite = 1";
+                selection = "bag = 'favorite'";
                 break;
             }
             Cursor cursor = db.query("sets", fields, selection, null, null, null, null);

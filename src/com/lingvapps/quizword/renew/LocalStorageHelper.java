@@ -6,29 +6,35 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class LocalStorageHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static final String DATABASE_NAME = "quizword";
 
     private static final String SET_TABLE_NAME = "sets";
     private static final String SET_TABLE_CREATE =
             "CREATE TABLE " + SET_TABLE_NAME + " (" +
             "id int primary key, " +
-            "is_my int NOT NULL DEFAULT 0, " +
-            "is_in_class int NOT NULL DEFAULT 0, " +
-            "is_favorite int NOT NULL DEFAULT 0, " +
+            "bag varchar(15) NOT NULL, " +
             "name varchar(255) NOT NULL, " +
             "lang_terms char(2) NOT NULL, " +
             "lang_definitions char(2) NOT NULL, " +
             "term_count int NOT NULL default 0);";
     private static final String SET_INDEX1_CREATE =
-            "CREATE INDEX " + SET_TABLE_NAME + "_is_my ON " +
-            SET_TABLE_NAME + " (is_my)";
-    private static final String SET_INDEX2_CREATE =
-            "CREATE INDEX " + SET_TABLE_NAME + "_is_in_class ON " +
-            SET_TABLE_NAME + " (is_in_class)";
-    private static final String SET_INDEX3_CREATE =
-            "CREATE INDEX " + SET_TABLE_NAME + "_is_favorite ON " +
-            SET_TABLE_NAME + " (is_favorite)";
+            "CREATE INDEX " + SET_TABLE_NAME + "_bag ON " +
+            SET_TABLE_NAME + " (bug)";
+
+    private static final String FOLDER_TABLE_NAME = "folders";
+    private static final String FOLDER_TABLE_CREATE =
+            "CREATE TABLE " + FOLDER_TABLE_NAME + " (" +
+            "id int primary key, " +
+            "name varchar(255) NOT NULL, " +
+            "set_count int NOT NULL default 0);";
+
+    private static final String CLASS_TABLE_NAME = "classes";
+    private static final String CLASS_TABLE_CREATE =
+            "CREATE TABLE " + CLASS_TABLE_NAME + " (" +
+            "id int primary key, " +
+            "name varchar(255) NOT NULL, " +
+            "set_count int NOT NULL default 0);";
     
     private static final String CARD_TABLE_NAME = "cards";
     private static final String CARD_TABLE_CREATE =
@@ -53,9 +59,8 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SET_TABLE_CREATE);
         db.execSQL(SET_INDEX1_CREATE);
-        db.execSQL(SET_INDEX2_CREATE);
-        db.execSQL(SET_INDEX3_CREATE);
-        
+        db.execSQL(FOLDER_TABLE_CREATE);
+        db.execSQL(CLASS_TABLE_CREATE);
         db.execSQL(CARD_TABLE_CREATE);
         db.execSQL(CARD_INDEX_CREATE);
     }
@@ -64,6 +69,8 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE " + CARD_TABLE_NAME);
         db.execSQL("DROP TABLE " + SET_TABLE_NAME);
+        db.execSQL("DROP TABLE " + FOLDER_TABLE_NAME);
+        db.execSQL("DROP TABLE " + CLASS_TABLE_NAME);
         Preferences.getInstance(context).clearDataSyncedFlagAll();
         onCreate(db);
     }
@@ -77,20 +84,12 @@ public class LocalStorageHelper extends SQLiteOpenHelper {
     public void clear_all(SQLiteDatabase db) {
         db.delete(CARD_TABLE_NAME, null, null);
         db.delete(SET_TABLE_NAME, null, null);
-    }
+        db.delete(FOLDER_TABLE_NAME, null, null);
+        db.delete(CLASS_TABLE_NAME, null, null);
+   }
 
-    public void clear_my_sets(SQLiteDatabase db) {
+    public void clear_sets(SQLiteDatabase db, String what) {
         db.execSQL("PRAGMA foreign_keys = ON");
-        db.delete(SET_TABLE_NAME, "is_my = 1 AND is_in_class = 0 AND is_favorite = 0", null);
-    }
-
-    public void clear_my_classes_sets(SQLiteDatabase db) {
-        db.execSQL("PRAGMA foreign_keys = ON");
-        db.delete(SET_TABLE_NAME, "is_my = 0 AND is_in_class = 1 AND is_favorite = 0", null);
-    }
-
-    public void clear_favorites(SQLiteDatabase db) {
-        db.execSQL("PRAGMA foreign_keys = ON");
-        db.delete(SET_TABLE_NAME, "is_my = 0 AND is_in_class = 0 AND is_favorite = 1", null);
+        db.delete(SET_TABLE_NAME, "bag = '" + what + "'", null);
     }
 }
